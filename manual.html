@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ESL Defuse — Universal Manual</title>
+
+  <style>
+    :root{
+      --ink:#24303a;
+      --muted:#71808c;
+      --paper:#fffdf7;
+      --line:#cfd9df;
+      --cream:#fff6db;
+      --pink:#ffc8d8;
+      --mint:#cdeedc;
+      --sky:#d7ebff;
+      --lav:#e8ddff;
+      --yellow:#ffe58f;
+      --accent:#ffb347;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 20px 20px, rgba(255,255,255,.7) 0 2px, transparent 3px) 0 0/28px 28px,
+        #f6efe6;
+      color:var(--ink);
+      font-family:"Trebuchet MS","Arial Rounded MT Bold",Arial,sans-serif;
+    }
+    .toolbar{
+      position:sticky;top:0;z-index:10;
+      display:flex;justify-content:center;gap:12px;padding:12px;
+      background:#3a4650;border-bottom:4px solid #242e36;
+    }
+    .toolbar button{
+      border:0;border-radius:999px;padding:11px 20px;
+      font-weight:900;background:var(--yellow);color:#2e3438;cursor:pointer;
+      box-shadow:0 4px 0 #caa84d;
+    }
+    .toolbar button:active{transform:translateY(2px);box-shadow:0 2px 0 #caa84d}
+    .manual{width:min(210mm,calc(100% - 24px));margin:18px auto 40px;display:grid;gap:20px}
+    .page{
+      position:relative;min-height:297mm;background:var(--paper);
+      padding:12mm 13mm 11mm;border:3px solid #d8d1c6;border-radius:22px;
+      box-shadow:0 10px 26px rgba(60,50,40,.15);overflow:hidden;
+    }
+    .page::before,.page::after{
+      content:"";position:absolute;width:90px;height:90px;border-radius:50%;
+      opacity:.25;pointer-events:none
+    }
+    .page::before{left:-28px;top:-25px;background:var(--sky)}
+    .page::after{right:-25px;bottom:-30px;background:var(--pink)}
+    .page-number{
+      position:absolute;right:12mm;bottom:8mm;color:#9b8e84;font-size:9pt;font-weight:900;
+      background:#fff;border:2px solid #d8d1c6;border-radius:999px;padding:3px 9px;
+    }
+    .head{
+      position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+      padding:13px 15px;margin-bottom:12px;border:3px solid #3f4b55;border-radius:18px;
+      background:linear-gradient(135deg,#fff4c9,#ffe8bd);box-shadow:0 5px 0 #d6b967;
+    }
+    .head::after{
+      content:"✦";position:absolute;right:122px;top:9px;font-size:18pt;color:#ff8ea8;transform:rotate(10deg)
+    }
+    .series{font-size:8.5pt;letter-spacing:.12em;font-weight:900;color:#7e746a}
+    h1{font-size:22pt;margin:3px 0 0;line-height:1.05}
+    .badge{
+      border:2px solid #3f4b55;padding:7px 10px;border-radius:999px;background:#fff;
+      font-size:8pt;font-weight:900;white-space:nowrap;
+    }
+    .say{
+      border:3px dashed #7aa8c9;border-radius:18px;padding:10px 12px;margin:10px 0 14px;background:#eef8ff;
+    }
+    .say strong{display:block;font-size:8.5pt;letter-spacing:.1em;margin-bottom:6px;color:#4c7897}
+    .phrases{display:flex;gap:7px;flex-wrap:wrap}
+    .phrase{
+      border:2px solid #9bc6df;border-radius:999px;padding:6px 10px;
+      font-weight:900;font-size:9pt;background:#fff;box-shadow:0 2px 0 #c9dfea;
+    }
+    .box,.rules,.animal-grid,.dirs,.lookup-grid{position:relative;z-index:1}
+    .box{
+      border:3px solid #49545e;border-radius:18px;overflow:hidden;margin:12px 0;background:#fff;
+      box-shadow:0 5px 0 #d7d2ca;
+    }
+    .box-title{background:#4c5862;color:white;padding:8px 12px;font-weight:900;letter-spacing:.07em;font-size:9pt}
+    table{width:100%;border-collapse:collapse;background:#fff}
+    th,td{border-bottom:1px solid #dfe6ea;padding:9px 10px;text-align:left;vertical-align:middle}
+    tr:nth-child(even) td{background:#fffaf0}
+    tr:last-child td{border-bottom:0}
+    th{font-size:8pt;color:#7c8993;letter-spacing:.08em;background:#f2f6f8}
+    .big{font-weight:950;font-size:12pt}
+    .answer{font-weight:950;font-size:11pt}
+    .swatch{
+      display:inline-block;width:21px;height:21px;border-radius:7px;border:2px solid #39434a;
+      margin-right:7px;vertical-align:middle;box-shadow:inset 0 1px 2px rgba(255,255,255,.5);
+    }
+    .rules{display:grid;gap:10px}
+    .rule{
+      display:grid;
+      grid-template-columns:70px 1fr;
+      gap:10px;
+      border:3px solid #d6dde2;
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:0 4px 0 #ddd6cc;
+      align-items:stretch;
+    }
+    .count{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      width:70px;
+      min-width:70px;
+      max-width:70px;
+      padding:0;
+      margin:0;
+      line-height:1;
+      background:linear-gradient(#44515c,#34404a);
+      color:white;
+      font-size:21pt;
+      font-weight:950;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
+    .rule-text{padding:11px 12px}
+    .rule-text p{margin:0 0 5px;font-size:11pt}
+    .rule-text p:last-child{margin-bottom:0}
+    .wire-manual{display:grid;gap:8px;position:relative;z-index:1}
+    .wire-count-section{
+      border:3px solid #d6dde2;border-radius:18px;background:#fff;overflow:hidden;
+      box-shadow:0 4px 0 #ddd6cc;
+    }
+    .wire-count-head{
+      display:flex;align-items:center;gap:9px;padding:5px 9px;background:#44515c;color:#fff;
+      font-weight:950;font-size:9pt;letter-spacing:.04em;
+    }
+    .wire-count-badge{
+      display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;min-width:29px;
+      border-radius:50%;background:#fff;color:#34404a;font-size:14pt;font-weight:950;line-height:1;
+    }
+    .wire-key-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+    .wire-key-card{padding:8px 9px;border-right:2px solid #e3e8eb;min-height:82px}
+    .wire-key-card:last-child{border-right:0}
+    .wire-key-title{font-size:9pt;font-weight:950;margin-bottom:5px;color:#3f4b55}
+    .wire-question{font-size:8.5pt;line-height:1.2;font-weight:950;color:#26313a;margin:3px 0 5px}
+    .wire-answer{font-size:7.8pt;line-height:1.25;margin:2px 0;color:#4c5862}
+    .wire-answer strong{display:inline-block;min-width:28px;color:#26313a}
+    .wire-howto{
+      margin:6px 0 8px;padding:7px 10px;border:2px dashed #7aa8c9;border-radius:14px;
+      background:#eef8ff;font-size:8.5pt;font-weight:900;color:#4c7897;text-align:center;
+    }
+    @media(max-width:760px){
+      .wire-key-grid{grid-template-columns:1fr}
+      .wire-key-card{border-right:0;border-bottom:2px solid #e3e8eb}
+      .wire-key-card:last-child{border-bottom:0}
+    }
+    
+    .color-key-results{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px 26px;
+      justify-content:flex-start;
+    }
+    .key-result-line{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+      min-width:108px;
+      padding-right:4px;
+    }
+    @media print{
+      .color-key-results{
+        gap:8px 26px !important;
+      }
+      .key-result-line{
+        min-width:108px !important;
+        gap:6px !important;
+      }
+    }
+
+    @media print{
+      .wire-manual{gap:7px}
+      .wire-count-head{padding:4px 8px}
+      .wire-key-card{padding:7px 8px;min-height:78px}
+      .wire-question{font-size:8pt}
+      .wire-answer{font-size:7.5pt}
+    }
+    .animal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .animal{
+      border:3px solid #d6dde2;border-radius:18px;padding:10px 12px;
+      display:flex;align-items:center;justify-content:space-between;gap:9px;
+      background:linear-gradient(135deg,#fff,#f9fdff);box-shadow:0 4px 0 #ddd6cc;
+    }
+    .animal:nth-child(4n+1),.animal:nth-child(4n+2){background:#fff8ec}
+    .animal strong{font-size:11pt}
+    .symbol-card{align-items:center}
+    .symbol-cell{width:88px;min-width:88px;display:flex;align-items:center;justify-content:center;color:#24303a}
+    .symbol-cell .symbol-svg{width:72px;height:72px;display:block}
+    .animal-key-seqs{display:grid;gap:3px;min-width:130px}
+    .animal-key-line{display:flex;align-items:center;gap:8px;font-weight:900;font-size:9.5pt}
+    .animal-seq-text{font-variant-numeric:tabular-nums;letter-spacing:.08em}
+    .emoji{font-size:25pt;margin-right:7px}
+    .seq{
+      display:flex;
+      gap:5px;
+      flex-wrap:nowrap;
+      align-items:center;
+    }
+    .num{
+      width:35px;
+      height:35px;
+      min-width:35px;
+      min-height:35px;
+      max-width:35px;
+      max-height:35px;
+      flex:0 0 35px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      margin:0;
+      line-height:1;
+      text-align:center;
+      font-family:Arial, sans-serif;
+      font-variant-numeric: lining-nums tabular-nums;
+      background:#46515b;
+      color:white;
+      font-size:14pt;
+      font-weight:950;
+      border:2px solid #283038;
+      box-shadow:0 3px 0 #252c31;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
+    .dirs{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+    .dir{
+      border:3px solid #d6dde2;border-radius:18px;padding:10px 12px;
+      display:grid;grid-template-columns:1fr 1.5fr;align-items:center;gap:8px;
+      background:#fff;box-shadow:0 4px 0 #ddd6cc;
+    }
+    .dir:nth-child(3n+1){background:#f2fbf5}
+    .dir:nth-child(3n+2){background:#f7f2ff}
+    .dir:nth-child(3n){background:#fff8ec}
+    .dir strong{font-size:10pt}
+    .dirs.compact-directions{gap:7px}
+    .dirs.compact-directions .dir{padding:8px 10px}
+    .dirs.compact-directions .arrows{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:5px;
+      flex-wrap:nowrap;
+      font-size:0;
+      white-space:nowrap;
+    }
+    .dir-step{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:30px;
+      min-width:30px;
+      max-width:30px;
+      height:24px;
+      border:2px solid #f1b08d;
+      border-radius:999px;
+      background:#fff3ec;
+      color:#de7240;
+      font-size:16pt;
+      font-weight:950;
+      line-height:1;
+      box-sizing:border-box;
+      box-shadow:0 2px 0 #ead8cf;
+      font-family:Arial, sans-serif;
+    }
+    @media print{
+      .arrows{
+        flex-wrap:nowrap !important;
+        white-space:nowrap !important;
+      }
+      .dir-step{
+        width:30px !important;
+        min-width:30px !important;
+        max-width:30px !important;
+        height:24px !important;
+        font-size:16pt !important;
+        font-family:Arial, sans-serif !important;
+      }
+    }
+    .arrows{font-size:18pt;font-weight:950;letter-spacing:.1em}
+    .lookup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+    .lookup{
+      border:3px solid #d6dde2;border-radius:18px;padding:10px;
+      display:grid;grid-template-columns:1fr 38px 1fr;align-items:center;gap:6px;
+      background:#fff;box-shadow:0 4px 0 #ddd6cc;
+    }
+    .lookup:nth-child(4n+1),.lookup:nth-child(4n+2){background:#eef8ff}
+    .lookup:nth-child(4n+3),.lookup:nth-child(4n+4){background:#fff6e8}
+    .lookup strong{text-align:center;font-size:10pt}
+    .lookup .arrow{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:34px;
+      min-width:34px;
+      height:28px;
+      margin:0 auto;
+      border:2px solid #f1b08d;
+      border-radius:999px;
+      background:#fff3ec;
+      text-align:center;
+      font-size:18pt;
+      line-height:1;
+      color:#de7240;
+      font-weight:950;
+      box-sizing:border-box;
+    }
+    .note{
+      border:3px solid #f0c85a;border-radius:16px;padding:10px 12px;
+      background:#fff7cf;margin-top:11px;font-size:9pt;box-shadow:0 4px 0 #e4cf8b;
+    }
+    .note::before{content:"💡 "}
+    .calc-equation{
+      margin:12px 0;
+      padding:12px 14px;
+      border:3px solid #49545e;
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 5px 0 #d7d2ca;
+      display:grid;
+      grid-template-columns:auto 1fr auto auto auto;
+      align-items:center;
+      gap:8px;
+    }
+    .calc-symbol{
+      font-size:22pt;
+      font-weight:950;
+      color:#24303a;
+      text-align:center;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .calc-op-box{
+      min-height:0;
+      padding:8px 10px;
+      border:3px dashed #9bc6df;
+      border-radius:16px;
+      background:#eef8ff;
+      display:grid;
+      grid-template-columns:repeat(4,auto);
+      justify-content:center;
+      gap:8px 10px;
+      align-items:center;
+    }
+    .calc-op-item{
+      display:flex;
+      align-items:center;
+      gap:5px;
+      font-size:8.7pt;
+      font-weight:900;
+      color:#4c7897;
+      white-space:nowrap;
+      line-height:1;
+    }
+    .calc-dot{
+      display:inline-block;
+      width:14px;
+      height:14px;
+      min-width:14px;
+      min-height:14px;
+      max-width:14px;
+      max-height:14px;
+      flex:0 0 14px;
+      border-radius:4px;
+      border:2px solid #39434a;
+      box-sizing:border-box;
+      background-clip:padding-box;
+      box-shadow:none;
+      overflow:hidden;
+    }
+    .calc-dot.red{background:#ff5d5d}
+    .calc-dot.blue{background:#5d9cff}
+    .calc-dot.green{background:#64d29c}
+    .calc-dot.yellow{background:#f0c94c}
+
+    .rule-key-legend{
+      display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+      margin:8px 0 10px;
+    }
+    .rule-key-pill{
+      display:inline-flex;align-items:center;gap:5px;padding:4px 8px;
+      border:2px solid #d6dde2;border-radius:999px;background:#fff;
+      font-size:8pt;font-weight:950;white-space:nowrap;
+    }
+    .rule-key-pill b{font-size:13pt;line-height:1;color:#3d4851}
+    .key-result-line{
+      display:flex;align-items:center;gap:5px;flex-wrap:nowrap;white-space:nowrap;
+      font-size:8.4pt;font-weight:900;
+    }
+    .key-result-line .key-symbol{font-size:11pt;font-weight:950;min-width:13px;text-align:center}
+    .color-key-results{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+    .color-key-results .swatch{width:14px;height:14px;margin-right:2px;border-radius:4px}
+    .animal-key-seqs{display:grid;gap:3px;min-width:128px}
+    .animal-key-line{display:grid;grid-template-columns:16px 1fr;gap:4px;align-items:center}
+    .animal-key-line .key-symbol{font-size:10pt;font-weight:950;text-align:center}
+    .animal-seq-text{
+      padding:2px 5px;border:1px solid #d6dde2;border-radius:999px;background:#fff;
+      font-family:Arial,sans-serif;font-size:8.5pt;font-weight:900;letter-spacing:.08em;text-align:center;
+    }
+    .lookup-key-lines{display:grid;gap:3px;min-width:110px}
+    .lookup-key-line{display:grid;grid-template-columns:16px 1fr;gap:4px;align-items:center;font-size:8.5pt;font-weight:950}
+    .lookup-key-line .key-symbol{font-size:10pt;text-align:center}
+    .calc-key-table th,.calc-key-table td{text-align:center}
+    .calc-key-table .key-cell{font-size:15pt;font-weight:950}
+    @media print{
+      .rule-key-pill{padding:3px 7px}
+      .animal-seq-text,.lookup-key-line{font-size:8pt}
+    }
+
+    @media(max-width:760px){
+      .calc-equation{
+        grid-template-columns:1fr;
+        justify-items:center;
+        text-align:center;
+      }
+      .calc-op-box{
+        width:100%;
+        max-width:340px;
+        grid-template-columns:repeat(2,auto);
+      }
+    }
+
+    .module-question{
+      margin:10px 0 14px;
+      font-size:18pt;
+      font-weight:900;
+      color:#4c7897;
+      padding:0 4px;
+    }
+
+    .mascot{
+      margin-top:12px;display:flex;align-items:center;gap:10px;padding:10px 12px;
+      border:3px solid #d7dfe4;border-radius:18px;background:#fff;box-shadow:0 4px 0 #ddd6cc;
+    }
+    .mascot-face{font-size:28pt;line-height:1}
+    .mascot-text{font-size:9pt;color:#65727c;font-weight:900}
+
+    .cover-page{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:16mm 13mm 26mm;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(215,235,255,.9) 0 70px, transparent 72px),
+        radial-gradient(circle at 82% 24%, rgba(255,200,216,.9) 0 64px, transparent 66px),
+        radial-gradient(circle at 70% 82%, rgba(205,238,220,.9) 0 72px, transparent 74px),
+        linear-gradient(180deg,#fffef8,#fff7e9);
+    }
+    .cover-inner{
+      width:150mm;
+      max-width:150mm;
+      margin:0 auto;
+      padding:18mm 12mm 16mm;
+      border:4px solid #3f4b55;
+      border-radius:28px;
+      background:#fffdf7;
+      box-shadow:0 8px 0 #e4d39b;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+    }
+    .cover-kicker{
+      display:inline-block;
+      margin-bottom:14px;
+      padding:7px 14px;
+      border:2px solid #3f4b55;
+      border-radius:999px;
+      background:#fff4c9;
+      font-size:10pt;
+      font-weight:900;
+      letter-spacing:.12em;
+      color:#7e746a;
+    }
+    .cover-bomb{
+      font-size:54pt;
+      line-height:1;
+      margin:8px 0 10px;
+      filter:drop-shadow(0 6px 0 rgba(255,179,71,.22));
+    }
+    .cover-title{
+      margin:0;
+      font-size:34pt;
+      line-height:1;
+    }
+    .cover-illustration-wrap{
+      width:100%;
+      max-width:118mm;
+      margin:14px auto 14px;
+      padding:10px;
+      border:3px solid #d6dde2;
+      border-radius:26px;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(215,235,255,.95) 0 46px, transparent 48px),
+        radial-gradient(circle at 84% 22%, rgba(255,200,216,.95) 0 40px, transparent 42px),
+        linear-gradient(180deg,#ffffff,#fbfdff);
+      box-shadow:0 5px 0 #ddd6cc;
+    }
+    .cover-illustration{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:18px;
+    }
+    .cover-page-number{
+      left:50%;
+      right:auto;
+      transform:translateX(-50%);
+      bottom:8mm;
+      min-width:76px;
+      text-align:center;
+    }
+    .cover-subtitle{
+      margin:12px 0 0;
+      font-size:14pt;
+      font-weight:900;
+      color:#65727c;
+    }
+    .cover-note{
+      margin:18px auto 0;
+      max-width:95mm;
+      padding:12px 14px;
+      border:3px dashed #9bc6df;
+      border-radius:18px;
+      background:#eef8ff;
+      font-size:10pt;
+      font-weight:900;
+      color:#4c7897;
+    }
+    .cover-footer{
+      margin-top:20px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .cover-chip{
+      padding:7px 11px;
+      border:2px solid #d6dde2;
+      border-radius:999px;
+      background:#fff;
+      font-size:9pt;
+      font-weight:900;
+      box-shadow:0 2px 0 #ddd6cc;
+    }
+
+    @media(max-width:760px){
+      .page{min-height:auto;padding:20px;border-radius:16px}
+      .manual{width:calc(100% - 18px)}
+      .animal-grid,.dirs,.lookup-grid{grid-template-columns:1fr}
+      .head{flex-direction:column}
+      .badge{align-self:flex-start}
+    }
+    @media print{
+        .calc-dot{
+          display:inline-block !important;
+          width:14px !important;
+          height:14px !important;
+          min-width:14px !important;
+          min-height:14px !important;
+          max-width:14px !important;
+          max-height:14px !important;
+          flex:0 0 14px !important;
+          border-radius:4px !important;
+          box-shadow:none !important;
+          overflow:hidden !important;
+        }
+
+      @page{size:A4 portrait;margin:0}
+      body{background:white}.toolbar{display:none!important}.manual{display:block;width:auto;margin:0}
+      .page{
+        width:210mm;height:297mm;min-height:297mm;margin:0;box-shadow:none;border-radius:0;
+        break-after:page;page-break-after:always;
+      }
+      .page:last-child{break-after:auto;page-break-after:auto}
+    }
+  
+    .route-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:4px 6px;
+      margin-top:4px;
+    }
+    .route-card{
+      border:2px solid #d6dde2;
+      border-radius:14px;
+      background:#fff;
+      padding:4px 6px;
+      box-shadow:0 2px 0 #ddd6cc;
+    }
+    .route-card strong{
+      display:block;
+      font-size:9pt;
+      line-height:1;
+      color:#36424c;
+      margin-bottom:2px;
+    }
+    .route-line{
+      display:grid;
+      grid-template-columns:68px 1fr;
+      align-items:center;
+      gap:6px;
+      margin:1px 0;
+      min-height:18px;
+    }
+    .route-label{
+      display:block;
+      width:68px;
+      height:18px;
+      padding:1px 3px;
+      border-radius:9px;
+      border:2px solid #b8c8d4;
+      background:#eef8ff;
+      color:#4c7897;
+      font-size:7pt;
+      font-weight:950;
+      line-height:12px;
+      text-align:center;
+      white-space:nowrap;
+      box-sizing:border-box;
+      letter-spacing:0;
+      overflow:hidden;
+    }
+    .route-card .arrows{
+      gap:3px;
+      justify-content:flex-start;
+    }
+    .route-card .dir-step{
+      width:22px;
+      min-width:22px;
+      max-width:22px;
+      height:22px;
+      font-size:15pt;
+      line-height:1;
+      border-width:2px;
+      color:#b84f20;
+      font-weight:950;
+    }
+    @media print{
+      .route-grid{
+        gap:4px 6px !important;
+        margin-top:4px !important;
+      }
+      .route-card{
+        padding:4px 6px !important;
+      }
+      .route-line{
+        grid-template-columns:68px 1fr !important;
+        gap:6px !important;
+        margin:1px 0 !important;
+        min-height:18px !important;
+      }
+      .route-label{
+        display:block !important;
+        width:68px !important;
+        height:18px !important;
+        padding:1px 3px !important;
+        line-height:12px !important;
+        border-radius:9px !important;
+      }
+      .route-card .dir-step{
+        width:22px !important;
+        min-width:22px !important;
+        max-width:22px !important;
+        height:22px !important;
+        font-size:15pt !important;
+        line-height:1 !important;
+        color:#b84f20 !important;
+        font-weight:950 !important;
+      }
+    }
+
+      .route-note{
+      margin-top:6px;
+      padding:7px 10px;
+      font-size:8.5pt;
+    }
+    @media print{
+      .route-note{
+        margin-top:6px !important;
+        padding:7px 10px !important;
+        font-size:8.5pt !important;
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div class="toolbar">
+    <button id="printBtn" type="button">Print Universal Manual</button>
+  </div>
+
+  <main class="manual">
+    
+    <section class="page cover-page">
+      <div class="cover-inner">
+        <div class="cover-kicker">English Only</div>
+        <div class="cover-illustration-wrap"><img class="cover-illustration" src="cover-illustration.png" alt="Cute student defusing a bomb with colored wires"></div>
+        <h1 class="cover-title">Manual</h1>
+      </div>
+      <div class="page-number cover-page-number">1 / 7</div>
+    </section>
+
+<section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 1</div><h1>🎨 Color Panel</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What word do you see?</span><span class="phrase">What symbol?</span><span class="phrase">Star / circle / triangle</span><span class="phrase">Press ___.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="box"><div class="box-title">DISPLAY WORD ➡ USE THE RULE KEY ➡ PRESS</div><table><thead><tr><th>DISPLAY</th><th>PRESS</th></tr></thead><tbody><tr><td class="big">APPLE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#3175bd"></span>BLUE</span></div></td></tr><tr><td class="big">OCEAN</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span></div></td></tr><tr><td class="big">GRASS</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span></div></td></tr><tr><td class="big">BANANA</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#36865e"></span>GREEN</span></div></td></tr><tr><td class="big">GRAPE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c9424b"></span>RED</span></div></td></tr><tr><td class="big">SUN</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span></div></td></tr><tr><td class="big">SNOW</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span></div></td></tr><tr><td class="big">LEMON</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#36865e"></span>GREEN</span></div></td></tr><tr><td class="big">TREE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c9424b"></span>RED</span></div></td></tr><tr><td class="big">NIGHT</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#3175bd"></span>BLUE</span></div></td></tr><tr><td class="big">ROSE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span></div></td></tr><tr><td class="big">CLOUD</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#36865e"></span>GREEN</span></div></td></tr></tbody></table></div>
+      <div class="note">The same display word has a different answer for each rule key. Always check the symbol.</div>
+      <div class="mascot"><div class="mascot-face">🧸</div><div class="mascot-text">Say both the word and the symbol.</div></div>
+      <div class="page-number">2 / 7</div>
+    </section>
+
+    <section class="page">
+      <header class="head">
+        <div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 2</div><h1>✂️ Wires</h1></div>
+        <div class="badge">WORKS FOR EVERY BOMB</div>
+      </header>
+      <div class="module-question">How many wires? What symbol?</div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="wire-howto">Find the wire count and symbol. Answer ONE yes-or-no question.</div>
+      <div class="wire-manual">
+        <div class="wire-count-section">
+          <div class="wire-count-head"><span class="wire-count-badge">4</span><span>4 WIRES</span></div>
+          <div class="wire-key-grid">
+            <div class="wire-key-card"><div class="wire-key-title">★ STAR</div><div class="wire-question">Are there 2 or more RED wires?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut second RED.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut third wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">● CIRCLE</div><div class="wire-question">Is the first wire BLUE?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut last wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut second wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">▲ TRIANGLE</div><div class="wire-question">Are there 2 or more YELLOW wires?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut first YELLOW.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fourth wire.</div></div>
+          </div>
+        </div>
+        <div class="wire-count-section">
+          <div class="wire-count-head"><span class="wire-count-badge">5</span><span>5 WIRES</span></div>
+          <div class="wire-key-grid">
+            <div class="wire-key-card"><div class="wire-key-title">★ STAR</div><div class="wire-question">Are the first and last wires the same color?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut third wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut second wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">● CIRCLE</div><div class="wire-question">Is there only 1 BLACK wire?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut the BLACK wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fourth wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">▲ TRIANGLE</div><div class="wire-question">Is the last wire BLUE?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut second wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut first wire.</div></div>
+          </div>
+        </div>
+        <div class="wire-count-section">
+          <div class="wire-count-head"><span class="wire-count-badge">6</span><span>6 WIRES</span></div>
+          <div class="wire-key-grid">
+            <div class="wire-key-card"><div class="wire-key-title">★ STAR</div><div class="wire-question">Is there only 1 RED wire?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut the RED wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fifth wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">● CIRCLE</div><div class="wire-question">Are there 2 or more BLACK wires?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut second BLACK.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fourth wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">▲ TRIANGLE</div><div class="wire-question">Is the first wire YELLOW?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut last wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut third wire.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="mascot"><div class="mascot-face">🐣</div><div class="mascot-text">Say the symbol, count the wires, then answer the one question with YES or NO.</div></div>
+      <div class="page-number">3 / 7</div>
+    </section>
+
+
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 3</div><h1>🔣 Symbol Numbers</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What symbol do you see?</span><span class="phrase">What symbol?</span><span class="phrase">Circle / dot / line / top / bottom</span><span class="phrase">Press four numbers in order.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="animal-grid"><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with two short lines on top and a dot inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="38" y1="23" x2="31" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="62" y1="23" x2="69" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">2 4 1 7</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 7 3 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">1 6 5 9</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with two short lines on top and no dot"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="38" y1="23" x2="31" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="62" y1="23" x2="69" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">5 1 8 3</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 7 1 4</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">5 1 3 8</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with one short line on top and a dot inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="50" y1="20" x2="50" y2="5" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">7 3 2 9</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">5 7 3 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">6 3 4 5</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with two short lines at the bottom and a dot inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="42" r="28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="39" y1="67" x2="31" y2="82" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="61" y1="67" x2="69" y2="82" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">3 8 6 1</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">5 3 2 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">3 4 1 6</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="triangle with a curved tail at the bottom"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><polygon points="50,12 20,66 80,66" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M50 66 C50 77 58 79 58 88 C58 95 53 98 49 98" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">8 2 5 4</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">9 8 1 3</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">9 4 7 5</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="triangle with one short line on top and two dots inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><polygon points="50,17 18,72 82,72" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="50" y1="17" x2="50" y2="3" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="40" cy="55" r="4.8" fill="currentColor" stroke="none"/><circle cx="60" cy="55" r="4.8" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">4 6 9 2</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">3 9 6 4</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">9 5 4 6</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="open square with a gap on the right and two dots inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M22 22 H78 V42" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M22 22 V78 H78 V58" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="40" cy="50" r="4.8" fill="currentColor" stroke="none"/><circle cx="60" cy="50" r="4.8" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">1 9 3 7</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">4 9 6 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">1 3 5 7</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="square with one dot inside and a curved tail at the bottom"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><rect x="22" y="22" width="56" height="56" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/><path d="M50 78 C50 88 58 90 58 98 C58 104 53 107 48 108" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">6 5 2 8</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">7 6 8 2</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">9 3 7 2</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="u shape with three short lines on top"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M25 28 V65 C25 78 35 86 50 86 C65 86 75 78 75 65 V28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="35" y1="18" x2="30" y2="6" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="50" y1="16" x2="50" y2="2" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="65" y1="18" x2="70" y2="6" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">9 7 4 1</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 2 8 5</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">2 7 4 9</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="u shape with one dot inside and short arms on both sides"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M30 22 V60 C30 76 39 86 50 86 C61 86 70 76 70 60 V22" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="30" y1="50" x2="15" y2="50" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="70" y1="50" x2="85" y2="50" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">2 9 6 5</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">1 4 6 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">7 9 3 5</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="crescent shape with a line through the middle"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M66 14 C46 18 32 34 32 50 C32 66 46 82 66 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M62 14 C47 22 40 35 40 50 C40 65 47 78 62 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="20" y1="50" x2="80" y2="50" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">5 8 1 4</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 3 2 5</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">2 8 5 3</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="crescent shape with two dots on the right side"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M66 14 C46 18 32 34 32 50 C32 66 46 82 66 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M62 14 C47 22 40 35 40 50 C40 65 47 78 62 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="74" cy="40" r="4.8" fill="currentColor" stroke="none"/><circle cx="74" cy="60" r="4.8" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">7 1 3 6</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">2 7 4 5</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">4 8 6 1</span></div></div></div></div>
+      <div class="note">Use the symbol AND the rule key. A wrong number resets the four-number sequence.</div>
+      <div class="mascot"><div class="mascot-face">🧩</div><div class="mascot-text">Good description words: circle, dot, line, top, bottom, inside, open, tail, and moon.</div></div>
+      <div class="page-number">4 / 7</div>
+    </section>
+
+    <section class="page">
+      <header class="head">
+        <div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 4</div><h1>🧭 Directions</h1></div>
+        <div class="badge">WORKS FOR EVERY BOMB</div>
+      </header>
+      <div class="say">
+        <strong>USE ENGLISH</strong>
+        <div class="phrases">
+          <span class="phrase">What place do you see?</span>
+          <span class="phrase">What route?</span>
+          <span class="phrase">Up / down / left / right</span>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">PLACE + ROUTE NUMBER ➜ DIRECTIONS</div>
+        <div class="route-grid"><div class="route-card"><strong>SCHOOL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>PARK</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div></div><div class="route-card"><strong>LIBRARY</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div></div><div class="route-card"><strong>STATION</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>HOSPITAL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div></div><div class="route-card"><strong>SUPERMARKET</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>RESTAURANT</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div></div><div class="route-card"><strong>POST OFFICE</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div></div><div class="route-card"><strong>MUSEUM</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span></div></div></div><div class="route-card"><strong>AIRPORT</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>HOTEL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>BANK</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div></div><div class="route-card"><strong>ZOO</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>CITY HALL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div></div></div>
+      </div>
+
+      <div class="note route-note">
+        Use the place + route number. Follow all arrows in order.
+      </div>
+
+      <div class="page-number">5 / 7</div>
+    </section>
+
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 5</div><h1>🔗 Word Lookup</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What word is on the display?</span><span class="phrase">What symbol?</span><span class="phrase">What are the choices?</span><span class="phrase">Press ___.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="box"><div class="box-title">DISPLAY WORD ➡ USE THE RULE KEY ➡ PRESS</div><div class="lookup-grid" style="padding:10px"><div class="lookup"><strong>APPLE</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ DOG</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ SOCCER</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ BOOK</span></div></div></div><div class="lookup"><strong>DOG</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ SCHOOL</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ APPLE</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ TENNIS</span></div></div></div><div class="lookup"><strong>SCHOOL</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ RED</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ PIZZA</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ PARK</span></div></div></div><div class="lookup"><strong>RED</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ TENNIS</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ SCHOOL</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ SUN</span></div></div></div><div class="lookup"><strong>TENNIS</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ BOOK</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ CAT</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ BLUE</span></div></div></div><div class="lookup"><strong>BOOK</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ CAR</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ RAIN</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ PENCIL</span></div></div></div><div class="lookup"><strong>CAR</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ RAIN</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ TRAIN</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ APPLE</span></div></div></div><div class="lookup"><strong>RAIN</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ PIZZA</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ TENNIS</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ RED</span></div></div></div><div class="lookup"><strong>PIZZA</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ CAT</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ CAR</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ TRAIN</span></div></div></div><div class="lookup"><strong>CAT</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ PARK</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ PENCIL</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ SOCCER</span></div></div></div><div class="lookup"><strong>PARK</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ BLUE</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ SUN</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ CAT</span></div></div></div><div class="lookup"><strong>BLUE</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ SOCCER</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ BOOK</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ RAIN</span></div></div></div><div class="lookup"><strong>SOCCER</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ PENCIL</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ DOG</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ CAR</span></div></div></div><div class="lookup"><strong>PENCIL</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ TRAIN</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ BLUE</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ SCHOOL</span></div></div></div><div class="lookup"><strong>TRAIN</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ SUN</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ PARK</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ DOG</span></div></div></div><div class="lookup"><strong>SUN</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ APPLE</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ RED</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ PIZZA</span></div></div></div></div></div>
+      <div class="note">Get 3 correct answers. After every answer, the display, choices, and rule key can change. Hard rounds include tempting answers from the other rule keys.</div>
+      <div class="mascot"><div class="mascot-face">🐶</div><div class="mascot-text">The symbol matters - the same word can point to three different answers.</div></div>
+      <div class="page-number">6 / 7</div>
+    </section>
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 6</div><h1>🧮 Calculator</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What are the numbers?</span><span class="phrase">What color is the light?</span><span class="phrase">What symbol?</span><span class="phrase">The answer is ___.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="calc-equation"><div class="calc-symbol">X</div><div class="calc-op-box"><div class="calc-op-item"><span class="calc-dot red"></span>RED</div><div class="calc-op-item"><span class="calc-dot blue"></span>BLUE</div><div class="calc-op-item"><span class="calc-dot green"></span>GREEN</div><div class="calc-op-item"><span class="calc-dot yellow"></span>YELLOW</div></div><div class="calc-symbol">Y</div><div class="calc-symbol">=</div><div class="calc-symbol">?</div></div>
+      <div class="box"><div class="box-title">RULE KEY + LIGHT COLOR ➡ MATH SYMBOL</div><table class="calc-key-table"><thead><tr><th>KEY</th><th><span class="swatch" style="background:#ff5d5d"></span>RED</th><th><span class="swatch" style="background:#5d9cff"></span>BLUE</th><th><span class="swatch" style="background:#64d29c"></span>GREEN</th><th><span class="swatch" style="background:#f0c94c"></span>YELLOW</th></tr></thead><tbody><tr><td class="key-cell">★</td><td class="answer">+</td><td class="answer">−</td><td class="answer">×</td><td class="answer">÷</td></tr><tr><td class="key-cell">●</td><td class="answer">÷</td><td class="answer">×</td><td class="answer">+</td><td class="answer">−</td></tr><tr><td class="key-cell">▲</td><td class="answer">−</td><td class="answer">+</td><td class="answer">÷</td><td class="answer">×</td></tr></tbody></table></div>
+      <div class="note">Get 2 correct calculations. The numbers, light, and rule key can change after every answer. Addition/subtraction use two-digit numbers; multiplication/division may use one- or two-digit numbers.</div>
+      <div class="mascot"><div class="mascot-face">🐼</div><div class="mascot-text">Check BOTH the symbol and the light before choosing the operation.</div></div>
+      <div class="page-number">7 / 7</div>
+    </section>
+
+  </main>
+
+  <script>
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+  </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111418" />
+  <title>ESL Defuse</title>
+  <link rel="stylesheet" href="style.css?v=route-v8-20260907-1" />
+</head>
+<body>
+  <main class="app">
+    <section id="home" class="screen active">
+      <div class="hero">
+        <div class="bomb-icon" aria-hidden="true">💣</div>
+        <div>
+          <div class="kicker">LOW-LEVEL ESL COMMUNICATION GAME</div>
+          <h1>ESL Defuse</h1>
+          <p>One student has the bomb. One student has the manual. Talk in English and defuse it before time runs out.</p>
+        </div>
+      </div>
+
+      <div class="home-grid single-setup">
+        <article class="card campaign-card">
+          <div class="campaign-badge">20 LEVEL CAMPAIGN · CAMPAIGN BUILD</div>
+          <h2 id="campaignHomeTitle">💣 Start at Level 1</h2>
+          <p>
+            Clear each level to advance. Later levels require more module clears,
+            less time per module, and can repeat the same module more than once.
+          </p>
+
+          <div class="campaign-preview">
+            <div>
+              <span id="homeLevelLabel">LEVEL 1</span>
+              <strong id="homeLevelDetails">1 module · 3:00</strong>
+            </div>
+            <div class="campaign-arrow">→</div>
+            <div>
+              <span>LEVEL 20</span>
+              <strong>10 modules · 5:00</strong>
+            </div>
+          </div>
+
+          <div id="campaignProgressNote" class="campaign-note">
+            No progress is saved. Refreshing the page starts again from Level 1.
+          </div>
+
+          <button id="startGame" class="primary">Start Level 1</button>
+        </article>
+      </div>
+
+      <div class="tip">
+        <strong>Classroom setup:</strong> Print the universal manual once. Give it to the Manual Reader and keep it hidden from the Defuser for the whole campaign.
+      </div>
+      <div class="build-note">Build: Campaign v13 · Symbol Numbers · 20 levels</div>
+    </section>
+
+    <section id="game" class="screen">
+      <section class="bomb-console" aria-label="Bomb defusal interface">
+        <div class="bomb-top-strip">
+          <div class="brand-plate">
+            <span class="warning-dot"></span>
+            <span>ESL DEFUSAL UNIT</span>
+          </div>
+
+          <div class="bomb-readout">
+            <div class="readout-label">TIME</div>
+            <div id="timer" class="digital-timer">03:00</div>
+          </div>
+
+          <div class="bomb-readout compact">
+            <div class="readout-label">STRIKES</div>
+            <div class="strike-lights" aria-label="Strike indicators">
+              <span id="strikeLight1" class="strike-light"></span>
+              <span id="strikeLight2" class="strike-light"></span>
+              <span id="strikeLight3" class="strike-light"></span>
+            </div>
+            <div class="strike-number"><span id="strikeCount">0</span>/3</div>
+          </div>
+        </div>
+
+        <div class="bomb-info-row">
+          <div class="info-plate">
+            <span class="info-label">SERIAL</span>
+            <strong id="serialNumber">ESL-4821</strong>
+          </div>
+          <div class="info-plate">
+            <span class="info-label">LEVEL</span>
+            <strong id="levelLabel">1 / 20</strong>
+          </div>
+          <div class="info-plate">
+            <span class="info-label">CLEAR</span>
+            <strong id="moduleProgress">1/1</strong>
+          </div>
+          <div class="info-plate">
+            <span class="info-label">STATUS</span>
+            <strong id="bombStatus">ARMED</strong>
+          </div>
+        </div>
+
+        <div class="bomb-body">
+          <div class="corner-screw screw-tl"></div>
+          <div class="corner-screw screw-tr"></div>
+          <div class="corner-screw screw-bl"></div>
+          <div class="corner-screw screw-br"></div>
+
+          <header class="module-header">
+            <div>
+              <div class="kicker">ACTIVE MODULE</div>
+              <h2 id="moduleTitle">Module</h2>
+            </div>
+            <div class="module-lamp-wrap">
+              <span class="module-lamp-label">READY</span>
+              <span id="moduleLamp" class="module-lamp"></span>
+            </div>
+          </header>
+
+          <div class="progress bomb-progress">
+            <div id="progressFill"></div>
+          </div>
+
+          <section id="bombModule" class="bomb-panel mounted-module" aria-live="polite"></section>
+        </div>
+
+        <div class="bomb-bottom-strip">
+          <div id="feedback" class="feedback console-feedback">Describe what you see. Do not look at the manual.</div>
+          <button id="abortGame" class="abort-switch" type="button">END TEST</button>
+        </div>
+      </section>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="result-card">
+        <div id="resultIcon" class="result-icon">✅</div>
+        <h2 id="resultTitle">Bomb Defused!</h2>
+        <p id="resultText">Nice communication.</p>
+        <button id="playAgain" class="primary">Play Again</button>
+      </div>
+    </section>
+  </main>
+<div id="explosionOverlay" class="explosion-overlay" aria-hidden="true">
+    <div class="explosion-flash"></div>
+    <div class="explosion-core">💥</div>
+    <div class="explosion-ring ring-one"></div>
+    <div class="explosion-ring ring-two"></div>
+    <div class="explosion-debris" aria-hidden="true">
+      <span style="--dx:-190px;--dy:-110px;--r:-120deg">◆</span>
+      <span style="--dx:-145px;--dy:85px;--r:75deg">▲</span>
+      <span style="--dx:-65px;--dy:-175px;--r:180deg">●</span>
+      <span style="--dx:25px;--dy:-195px;--r:130deg">◆</span>
+      <span style="--dx:120px;--dy:-145px;--r:-160deg">▲</span>
+      <span style="--dx:195px;--dy:-55px;--r:95deg">●</span>
+      <span style="--dx:185px;--dy:90px;--r:-70deg">◆</span>
+      <span style="--dx:90px;--dy:165px;--r:150deg">▲</span>
+      <span style="--dx:-20px;--dy:190px;--r:-120deg">●</span>
+      <span style="--dx:-135px;--dy:155px;--r:80deg">◆</span>
+      <span style="--dx:-205px;--dy:20px;--r:145deg">▲</span>
+      <span style="--dx:55px;--dy:125px;--r:-95deg">●</span>
+    </div>
+    <div class="explosion-text">BOOM!</div>
+  </div>
+
+  <script src="game.js?v=route-v8-20260907-1"></script>
+</body>
+</html>
