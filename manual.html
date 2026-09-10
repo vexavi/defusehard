@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ESL Defuse — Universal Manual</title>
+
+  <style>
+    :root{
+      --ink:#24303a;
+      --muted:#71808c;
+      --paper:#fffdf7;
+      --line:#cfd9df;
+      --cream:#fff6db;
+      --pink:#ffc8d8;
+      --mint:#cdeedc;
+      --sky:#d7ebff;
+      --lav:#e8ddff;
+      --yellow:#ffe58f;
+      --accent:#ffb347;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 20px 20px, rgba(255,255,255,.7) 0 2px, transparent 3px) 0 0/28px 28px,
+        #f6efe6;
+      color:var(--ink);
+      font-family:"Trebuchet MS","Arial Rounded MT Bold",Arial,sans-serif;
+    }
+    .toolbar{
+      position:sticky;top:0;z-index:10;
+      display:flex;justify-content:center;gap:12px;padding:12px;
+      background:#3a4650;border-bottom:4px solid #242e36;
+    }
+    .toolbar button{
+      border:0;border-radius:999px;padding:11px 20px;
+      font-weight:900;background:var(--yellow);color:#2e3438;cursor:pointer;
+      box-shadow:0 4px 0 #caa84d;
+    }
+    .toolbar button:active{transform:translateY(2px);box-shadow:0 2px 0 #caa84d}
+    .manual{width:min(210mm,calc(100% - 24px));margin:18px auto 40px;display:grid;gap:20px}
+    .page{
+      position:relative;min-height:297mm;background:var(--paper);
+      padding:12mm 13mm 11mm;border:3px solid #d8d1c6;border-radius:22px;
+      box-shadow:0 10px 26px rgba(60,50,40,.15);overflow:hidden;
+    }
+    .page::before,.page::after{
+      content:"";position:absolute;width:90px;height:90px;border-radius:50%;
+      opacity:.25;pointer-events:none
+    }
+    .page::before{left:-28px;top:-25px;background:var(--sky)}
+    .page::after{right:-25px;bottom:-30px;background:var(--pink)}
+    .page-number{
+      position:absolute;right:12mm;bottom:8mm;color:#9b8e84;font-size:9pt;font-weight:900;
+      background:#fff;border:2px solid #d8d1c6;border-radius:999px;padding:3px 9px;
+    }
+    .head{
+      position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+      padding:13px 15px;margin-bottom:12px;border:3px solid #3f4b55;border-radius:18px;
+      background:linear-gradient(135deg,#fff4c9,#ffe8bd);box-shadow:0 5px 0 #d6b967;
+    }
+    .head::after{
+      content:"✦";position:absolute;right:122px;top:9px;font-size:18pt;color:#ff8ea8;transform:rotate(10deg)
+    }
+    .series{font-size:8.5pt;letter-spacing:.12em;font-weight:900;color:#7e746a}
+    h1{font-size:22pt;margin:3px 0 0;line-height:1.05}
+    .badge{
+      border:2px solid #3f4b55;padding:7px 10px;border-radius:999px;background:#fff;
+      font-size:8pt;font-weight:900;white-space:nowrap;
+    }
+    .say{
+      border:3px dashed #7aa8c9;border-radius:18px;padding:10px 12px;margin:10px 0 14px;background:#eef8ff;
+    }
+    .say strong{display:block;font-size:8.5pt;letter-spacing:.1em;margin-bottom:6px;color:#4c7897}
+    .phrases{display:flex;gap:7px;flex-wrap:wrap}
+    .phrase{
+      border:2px solid #9bc6df;border-radius:999px;padding:6px 10px;
+      font-weight:900;font-size:9pt;background:#fff;box-shadow:0 2px 0 #c9dfea;
+    }
+    .box,.rules,.animal-grid,.dirs,.lookup-grid{position:relative;z-index:1}
+    .box{
+      border:3px solid #49545e;border-radius:18px;overflow:hidden;margin:12px 0;background:#fff;
+      box-shadow:0 5px 0 #d7d2ca;
+    }
+    .box-title{background:#4c5862;color:white;padding:8px 12px;font-weight:900;letter-spacing:.07em;font-size:9pt}
+    table{width:100%;border-collapse:collapse;background:#fff}
+    th,td{border-bottom:1px solid #dfe6ea;padding:9px 10px;text-align:left;vertical-align:middle}
+    tr:nth-child(even) td{background:#fffaf0}
+    tr:last-child td{border-bottom:0}
+    th{font-size:8pt;color:#7c8993;letter-spacing:.08em;background:#f2f6f8}
+    .big{font-weight:950;font-size:12pt}
+    .answer{font-weight:950;font-size:11pt}
+    .swatch{
+      display:inline-block;width:21px;height:21px;border-radius:7px;border:2px solid #39434a;
+      margin-right:7px;vertical-align:middle;box-shadow:inset 0 1px 2px rgba(255,255,255,.5);
+    }
+    .rules{display:grid;gap:10px}
+    .rule{
+      display:grid;
+      grid-template-columns:70px 1fr;
+      gap:10px;
+      border:3px solid #d6dde2;
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:0 4px 0 #ddd6cc;
+      align-items:stretch;
+    }
+    .count{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      width:70px;
+      min-width:70px;
+      max-width:70px;
+      padding:0;
+      margin:0;
+      line-height:1;
+      background:linear-gradient(#44515c,#34404a);
+      color:white;
+      font-size:21pt;
+      font-weight:950;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
+    .rule-text{padding:11px 12px}
+    .rule-text p{margin:0 0 5px;font-size:11pt}
+    .rule-text p:last-child{margin-bottom:0}
+    .wire-manual{display:grid;gap:8px;position:relative;z-index:1}
+    .wire-count-section{
+      border:3px solid #d6dde2;border-radius:18px;background:#fff;overflow:hidden;
+      box-shadow:0 4px 0 #ddd6cc;
+    }
+    .wire-count-head{
+      display:flex;align-items:center;gap:10px;padding:7px 11px;background:#44515c;color:#fff;
+      font-weight:950;font-size:10.4pt;letter-spacing:.04em;
+    }
+    .wire-count-badge{
+      display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;
+      border-radius:50%;background:#fff;color:#34404a;font-size:16pt;font-weight:950;line-height:1;
+    }
+    .wire-key-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+    .wire-key-card{padding:11px 12px;border-right:2px solid #e3e8eb;min-height:102px}
+    .wire-key-card:last-child{border-right:0}
+    .wire-key-title{font-size:11pt;font-weight:950;margin-bottom:7px;color:#33414c}
+    .wire-question{font-size:10pt;line-height:1.32;font-weight:950;color:#23303a;margin:3px 0 8px}
+    .wire-answer{font-size:9.1pt;line-height:1.34;margin:4px 0;color:#31414d;font-weight:700}
+    .wire-answer strong{display:inline-block;min-width:36px;color:#1f2c36;font-size:9.2pt}
+    .wire-howto{
+      margin:6px 0 8px;padding:7px 10px;border:2px dashed #7aa8c9;border-radius:14px;
+      background:#eef8ff;font-size:8.5pt;font-weight:900;color:#4c7897;text-align:center;
+    }
+    @media(max-width:760px){
+      .wire-key-grid{grid-template-columns:1fr}
+      .wire-key-card{border-right:0;border-bottom:2px solid #e3e8eb}
+      .wire-key-card:last-child{border-bottom:0}
+    }
+    
+    .color-key-results{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px 26px;
+      justify-content:flex-start;
+    }
+    .key-result-line{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+      min-width:108px;
+      padding-right:4px;
+    }
+    @media print{
+      .color-key-results{
+        gap:8px 32px !important;
+      }
+      .key-result-line{
+        min-width:118px !important;
+        gap:6px !important;
+      }
+    }
+
+    @media print{
+      .wire-manual{gap:8px}
+      .wire-count-head{padding:6px 10px;font-size:9.7pt}
+      .wire-count-badge{width:32px;height:32px;min-width:32px;font-size:15pt}
+      .wire-key-card{padding:10px 10px;min-height:94px}
+      .wire-key-title{font-size:10.5pt}
+      .wire-question{font-size:9.5pt;line-height:1.28}
+      .wire-answer{font-size:8.7pt;line-height:1.3}
+      .wire-answer strong{min-width:34px}
+    }
+    .animal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .animal{
+      border:3px solid #d6dde2;border-radius:18px;padding:12px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      background:linear-gradient(135deg,#fff,#f9fdff);box-shadow:0 4px 0 #ddd6cc;
+    }
+    .animal:nth-child(4n+1),.animal:nth-child(4n+2){background:#fff8ec}
+    .animal strong{font-size:11pt}
+    .symbol-card{align-items:center}
+    .symbol-cell{width:102px;min-width:102px;display:flex;align-items:center;justify-content:center;color:#24303a}
+    .symbol-cell .symbol-svg{width:82px;height:82px;display:block}
+    .animal-key-seqs{display:grid;gap:3px;min-width:130px}
+    .animal-key-line{display:flex;align-items:center;gap:8px;font-weight:900;font-size:9.5pt}
+    .animal-seq-text{font-variant-numeric:tabular-nums;letter-spacing:.08em}
+    .emoji{font-size:25pt;margin-right:7px}
+    .seq{
+      display:flex;
+      gap:5px;
+      flex-wrap:nowrap;
+      align-items:center;
+    }
+    .num{
+      width:35px;
+      height:35px;
+      min-width:35px;
+      min-height:35px;
+      max-width:35px;
+      max-height:35px;
+      flex:0 0 35px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      margin:0;
+      line-height:1;
+      text-align:center;
+      font-family:Arial, sans-serif;
+      font-variant-numeric: lining-nums tabular-nums;
+      background:#46515b;
+      color:white;
+      font-size:14pt;
+      font-weight:950;
+      border:2px solid #283038;
+      box-shadow:0 3px 0 #252c31;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
+    .dirs{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+    .dir{
+      border:3px solid #d6dde2;border-radius:18px;padding:10px 12px;
+      display:grid;grid-template-columns:1fr 1.5fr;align-items:center;gap:8px;
+      background:#fff;box-shadow:0 4px 0 #ddd6cc;
+    }
+    .dir:nth-child(3n+1){background:#f2fbf5}
+    .dir:nth-child(3n+2){background:#f7f2ff}
+    .dir:nth-child(3n){background:#fff8ec}
+    .dir strong{font-size:10pt}
+    .dirs.compact-directions{gap:7px}
+    .dirs.compact-directions .dir{padding:8px 10px}
+    .dirs.compact-directions .arrows{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:5px;
+      flex-wrap:nowrap;
+      font-size:0;
+      white-space:nowrap;
+    }
+    .dir-step{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:30px;
+      min-width:30px;
+      max-width:30px;
+      height:24px;
+      border:2px solid #f1b08d;
+      border-radius:999px;
+      background:#fff3ec;
+      color:#de7240;
+      font-size:16pt;
+      font-weight:950;
+      line-height:1;
+      box-sizing:border-box;
+      box-shadow:0 2px 0 #ead8cf;
+      font-family:Arial, sans-serif;
+    }
+    @media print{
+      .arrows{
+        flex-wrap:nowrap !important;
+        white-space:nowrap !important;
+      }
+      .dir-step{
+        width:30px !important;
+        min-width:30px !important;
+        max-width:30px !important;
+        height:24px !important;
+        font-size:16pt !important;
+        font-family:Arial, sans-serif !important;
+      }
+    }
+    .arrows{font-size:18pt;font-weight:950;letter-spacing:.1em}
+    .lookup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+    .lookup{
+      border:3px solid #d6dde2;border-radius:18px;padding:10px;
+      display:grid;grid-template-columns:1fr 38px 1fr;align-items:center;gap:6px;
+      background:#fff;box-shadow:0 4px 0 #ddd6cc;
+    }
+    .lookup:nth-child(4n+1),.lookup:nth-child(4n+2){background:#eef8ff}
+    .lookup:nth-child(4n+3),.lookup:nth-child(4n+4){background:#fff6e8}
+    .lookup strong{text-align:center;font-size:10pt}
+    .lookup .arrow{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:34px;
+      min-width:34px;
+      height:28px;
+      margin:0 auto;
+      border:2px solid #f1b08d;
+      border-radius:999px;
+      background:#fff3ec;
+      text-align:center;
+      font-size:18pt;
+      line-height:1;
+      color:#de7240;
+      font-weight:950;
+      box-sizing:border-box;
+    }
+    .note{
+      border:3px solid #f0c85a;border-radius:16px;padding:10px 12px;
+      background:#fff7cf;margin-top:11px;font-size:9pt;box-shadow:0 4px 0 #e4cf8b;
+    }
+    .note::before{content:"💡 "}
+    .calc-equation{
+      margin:12px 0;
+      padding:15px 16px;
+      border:3px solid #49545e;
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 5px 0 #d7d2ca;
+      display:grid;
+      grid-template-columns:auto 1fr auto auto auto;
+      align-items:center;
+      gap:8px;
+    }
+    .calc-symbol{
+      font-size:27pt;
+      font-weight:950;
+      color:#24303a;
+      text-align:center;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .calc-op-box{
+      min-height:0;
+      padding:10px 14px;
+      border:3px dashed #9bc6df;
+      border-radius:16px;
+      background:#eef8ff;
+      display:grid;
+      grid-template-columns:repeat(4,auto);
+      justify-content:center;
+      gap:10px 16px;
+      align-items:center;
+    }
+    .calc-op-item{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      font-size:10.2pt;
+      font-weight:900;
+      color:#4c7897;
+      white-space:nowrap;
+      line-height:1;
+    }
+    .calc-dot{
+      display:inline-block;
+      width:18px;
+      height:18px;
+      min-width:18px;
+      min-height:18px;
+      max-width:18px;
+      max-height:18px;
+      flex:0 0 18px;
+      border-radius:4px;
+      border:2px solid #39434a;
+      box-sizing:border-box;
+      background-clip:padding-box;
+      box-shadow:none;
+      overflow:hidden;
+    }
+    .calc-dot.red{background:#ff5d5d}
+    .calc-dot.blue{background:#5d9cff}
+    .calc-dot.green{background:#64d29c}
+    .calc-dot.yellow{background:#f0c94c}
+
+    .rule-key-legend{
+      display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+      margin:8px 0 10px;
+    }
+    .rule-key-pill{
+      display:inline-flex;align-items:center;gap:5px;padding:4px 8px;
+      border:2px solid #d6dde2;border-radius:999px;background:#fff;
+      font-size:8pt;font-weight:950;white-space:nowrap;
+    }
+    .rule-key-pill b{font-size:13pt;line-height:1;color:#3d4851}
+    .key-result-line{
+      display:inline-flex;align-items:center;gap:7px;flex-wrap:nowrap;white-space:nowrap;
+      font-size:8.4pt;font-weight:900;
+      min-width:118px;
+      padding-right:6px;
+    }
+    .key-result-line .key-symbol{font-size:11pt;font-weight:950;min-width:14px;text-align:center}
+    .color-key-results{
+      display:grid;
+      grid-template-columns:repeat(3,max-content);
+      align-items:center;
+      column-gap:24px;
+      row-gap:6px;
+      justify-content:flex-start;
+    }
+    .color-key-results .swatch{width:14px;height:14px;margin-right:3px;border-radius:4px}
+    .animal-key-seqs{display:grid;gap:5px;min-width:156px}
+    .animal-key-line{display:grid;grid-template-columns:18px 1fr;gap:7px;align-items:center}
+    .animal-key-line .key-symbol{font-size:11.5pt;font-weight:950;text-align:center;color:#24303a}
+    .animal-seq-text{
+      padding:4px 8px;border:2px solid #d6dde2;border-radius:999px;background:#fff;
+      font-family:Arial,sans-serif;font-size:10pt;font-weight:900;letter-spacing:.12em;text-align:center;color:#34404a;
+    }
+    .lookup-key-lines{display:grid;gap:3px;min-width:110px}
+    .lookup-key-line{display:grid;grid-template-columns:16px 1fr;gap:4px;align-items:center;font-size:8.5pt;font-weight:950}
+    .lookup-key-line .key-symbol{font-size:10pt;text-align:center}
+    .calc-key-table th,.calc-key-table td{text-align:center;padding:12px 10px}
+    .calc-key-table th{font-size:9.5pt;font-weight:950}
+    .calc-key-table .key-cell{font-size:18pt;font-weight:950}
+    .calc-key-table .answer{font-size:17pt;font-weight:950;color:#25313a}
+    .calc-key-table .swatch{width:22px;height:22px;margin-right:6px;border-radius:6px}
+    @media print{
+      .rule-key-pill{padding:3px 7px}
+      .animal-seq-text{font-size:9.2pt;padding:3px 7px}
+      .lookup-key-line{font-size:8pt}
+    }
+
+    @media(max-width:760px){
+      .calc-equation{
+        grid-template-columns:1fr;
+        justify-items:center;
+        text-align:center;
+      }
+      .calc-op-box{
+        width:100%;
+        max-width:340px;
+        grid-template-columns:repeat(2,auto);
+      }
+    }
+
+    .module-question{
+      margin:10px 0 14px;
+      font-size:18pt;
+      font-weight:900;
+      color:#4c7897;
+      padding:0 4px;
+    }
+
+    .mascot{
+      margin-top:12px;display:flex;align-items:center;gap:10px;padding:10px 12px;
+      border:3px solid #d7dfe4;border-radius:18px;background:#fff;box-shadow:0 4px 0 #ddd6cc;
+    }
+    .mascot-face{font-size:28pt;line-height:1}
+    .mascot-text{font-size:9pt;color:#65727c;font-weight:900}
+
+    .cover-page{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:16mm 13mm 26mm;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(215,235,255,.9) 0 70px, transparent 72px),
+        radial-gradient(circle at 82% 24%, rgba(255,200,216,.9) 0 64px, transparent 66px),
+        radial-gradient(circle at 70% 82%, rgba(205,238,220,.9) 0 72px, transparent 74px),
+        linear-gradient(180deg,#fffef8,#fff7e9);
+    }
+    .cover-inner{
+      width:150mm;
+      max-width:150mm;
+      margin:0 auto;
+      padding:18mm 12mm 16mm;
+      border:4px solid #3f4b55;
+      border-radius:28px;
+      background:#fffdf7;
+      box-shadow:0 8px 0 #e4d39b;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+    }
+    .cover-kicker{
+      display:inline-block;
+      margin-bottom:14px;
+      padding:7px 14px;
+      border:2px solid #3f4b55;
+      border-radius:999px;
+      background:#fff4c9;
+      font-size:10pt;
+      font-weight:900;
+      letter-spacing:.12em;
+      color:#7e746a;
+    }
+    .cover-bomb{
+      font-size:54pt;
+      line-height:1;
+      margin:8px 0 10px;
+      filter:drop-shadow(0 6px 0 rgba(255,179,71,.22));
+    }
+    .cover-title{
+      margin:0;
+      font-size:34pt;
+      line-height:1;
+    }
+    .cover-illustration-wrap{
+      width:100%;
+      max-width:118mm;
+      margin:14px auto 14px;
+      padding:10px;
+      border:3px solid #d6dde2;
+      border-radius:26px;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(215,235,255,.95) 0 46px, transparent 48px),
+        radial-gradient(circle at 84% 22%, rgba(255,200,216,.95) 0 40px, transparent 42px),
+        linear-gradient(180deg,#ffffff,#fbfdff);
+      box-shadow:0 5px 0 #ddd6cc;
+    }
+    .cover-illustration{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:18px;
+    }
+    .cover-page-number{
+      left:50%;
+      right:auto;
+      transform:translateX(-50%);
+      bottom:8mm;
+      min-width:76px;
+      text-align:center;
+    }
+    .cover-subtitle{
+      margin:12px 0 0;
+      font-size:14pt;
+      font-weight:900;
+      color:#65727c;
+    }
+    .cover-page{
+      padding:10mm;
+    }
+    .cover-page::before,.cover-page::after{display:none}
+    .cover-full-wrap{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:0;
+    }
+    .cover-full-image{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:18px;
+    }
+    .cover-note{
+      margin:18px auto 0;
+      max-width:95mm;
+      padding:12px 14px;
+      border:3px dashed #9bc6df;
+      border-radius:18px;
+      background:#eef8ff;
+      font-size:10pt;
+      font-weight:900;
+      color:#4c7897;
+    }
+    .cover-footer{
+      margin-top:20px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .cover-chip{
+      padding:7px 11px;
+      border:2px solid #d6dde2;
+      border-radius:999px;
+      background:#fff;
+      font-size:9pt;
+      font-weight:900;
+      box-shadow:0 2px 0 #ddd6cc;
+    }
+
+    @media(max-width:760px){
+      .page{min-height:auto;padding:20px;border-radius:16px}
+      .manual{width:calc(100% - 18px)}
+      .animal-grid,.dirs,.lookup-grid{grid-template-columns:1fr}
+      .head{flex-direction:column}
+      .badge{align-self:flex-start}
+    }
+    @media print{
+        .calc-dot{
+          display:inline-block !important;
+          width:18px !important;
+          height:18px !important;
+          min-width:18px !important;
+          min-height:18px !important;
+          max-width:18px !important;
+          max-height:18px !important;
+          flex:0 0 18px !important;
+          border-radius:4px !important;
+          box-shadow:none !important;
+          overflow:hidden !important;
+        }
+
+      @page{size:A4 portrait;margin:0}
+      body{background:white}.toolbar{display:none!important}.manual{display:block;width:auto;margin:0}
+      .page{
+        width:210mm;height:297mm;min-height:297mm;margin:0;box-shadow:none;border-radius:0;
+        break-after:page;page-break-after:always;
+      }
+      .page:last-child{break-after:auto;page-break-after:auto}
+    }
+  
+    .route-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:3px 5px;
+      margin-top:3px;
+    }
+    .route-card{
+      border:2px solid #d6dde2;
+      border-radius:14px;
+      background:#fff;
+      padding:3px 6px;
+      box-shadow:0 2px 0 #ddd6cc;
+    }
+    .route-card strong{
+      display:block;
+      font-size:9.6pt;
+      line-height:1;
+      color:#36424c;
+      margin-bottom:1px;
+    }
+    .route-line{
+      display:grid;
+      grid-template-columns:72px 1fr;
+      align-items:center;
+      gap:6px;
+      margin:0;
+      min-height:20px;
+    }
+    .route-label{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:72px;
+      height:20px;
+      padding:1px 3px;
+      border-radius:9px;
+      border:2px solid #b8c8d4;
+      background:#eef8ff;
+      color:#4c7897;
+      font-size:7.6pt;
+      font-weight:950;
+      line-height:1;
+      text-align:center;
+      white-space:nowrap;
+      box-sizing:border-box;
+      letter-spacing:0;
+      overflow:hidden;
+    }
+    .route-card .arrows{
+      gap:3px;
+      justify-content:flex-start;
+    }
+    .route-card .dir-step{
+      width:24px;
+      min-width:24px;
+      max-width:24px;
+      height:24px;
+      font-size:16.5pt;
+      line-height:1;
+      border-width:2px;
+      color:#b84f20;
+      font-weight:950;
+    }
+    @media print{
+      .route-grid{
+        gap:3px 5px !important;
+        margin-top:3px !important;
+      }
+      .route-card{
+        padding:3px 6px !important;
+      }
+      .route-line{
+        grid-template-columns:72px 1fr !important;
+        gap:6px !important;
+        margin:0 !important;
+        min-height:20px !important;
+      }
+      .route-label{
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        width:72px !important;
+        height:20px !important;
+        padding:1px 3px !important;
+        line-height:1 !important;
+        border-radius:9px !important;
+        font-size:7.6pt !important;
+      }
+      .route-card .dir-step{
+        width:24px !important;
+        min-width:24px !important;
+        max-width:24px !important;
+        height:24px !important;
+        font-size:16.5pt !important;
+        line-height:1 !important;
+        color:#b84f20 !important;
+        font-weight:950 !important;
+      }
+    }
+
+      .route-note{
+      margin-top:4px;
+      padding:6px 10px;
+      font-size:8.5pt;
+    }
+    @media print{
+      .route-note{
+        margin-top:4px !important;
+        padding:6px 10px !important;
+        font-size:8.5pt !important;
+      }
+    }
+  
+    .decoder-intro{
+      border:3px dashed #7aa8c9;border-radius:16px;padding:8px 10px;margin:8px 0 9px;background:#eef8ff;
+      font-size:8.5pt;font-weight:800;line-height:1.35;
+    }
+    .decoder-intro b{color:#4c7897}
+    .decoder-table-box{margin:8px 0 0}
+    .decoder-table{table-layout:fixed;border-collapse:collapse}
+    .decoder-table th,.decoder-table td{
+      text-align:center;padding:3px 4px;height:6.35mm;border-right:1px solid #dfe6ea;
+      font-size:9pt;font-weight:900;
+    }
+    .decoder-table th{background:#eaf5fb;color:#4c7897;font-size:8pt;letter-spacing:.04em}
+    .decoder-table th:first-child,.decoder-table td:first-child{
+      width:15%;background:#4c5862;color:white;font-weight:950;
+    }
+    .decoder-table th:not(:first-child){width:17%}
+    .decoder-table tr:nth-child(even) td:not(:first-child){background:#fff8ec}
+    .decoder-table tr:nth-child(odd) td:not(:first-child){background:#fff}
+    .decoder-tip{margin-top:7px;padding:7px 10px;border:2px solid #edc14d;border-radius:13px;background:#fff7d7;font-size:8.3pt;font-weight:800}
+    @media print{
+      .decoder-intro{padding:8px 10px !important;margin:8px 0 9px !important}
+      .decoder-table th,.decoder-table td{padding:3px 4px !important;height:6.35mm !important;font-size:9pt !important}
+      .decoder-table th{font-size:8pt !important}
+    }
+
+  
+    .morse-key-note{
+      border:3px dashed #7aa8c9;border-radius:18px;padding:10px 12px;margin:10px 0 12px;
+      background:#eef8ff;font-size:10pt;font-weight:900;color:#4c7897;text-align:center;
+    }
+    .morse-manual-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:9px;position:relative;z-index:1;
+    }
+    .morse-manual-card{
+      display:grid;grid-template-columns:42px 1fr;align-items:center;gap:8px;
+      min-height:48px;padding:7px 9px;border:3px solid #d6dde2;border-radius:15px;
+      background:#fff;box-shadow:0 3px 0 #ddd6cc;
+    }
+    .morse-manual-card:nth-child(odd){background:#fff8ec}
+    .morse-manual-letter{
+      display:flex;align-items:center;justify-content:center;width:38px;height:38px;
+      border-radius:50%;background:#44515c;color:#fff;font-size:16pt;font-weight:950;
+    }
+    .morse-manual-code{
+      font-family:Arial,monospace;font-size:16pt;font-weight:950;letter-spacing:.12em;
+      color:#4c7897;white-space:nowrap;
+    }
+    @media print{
+      .morse-manual-grid{gap:9px !important}
+      .morse-manual-card{min-height:48px !important;padding:7px 9px !important}
+      .morse-manual-code{font-size:16pt !important}
+    }
+
+  
+    .morse-decoder-table{width:100%;border-collapse:collapse;table-layout:fixed}
+    .morse-decoder-table th{font-size:7.2pt;text-align:center;padding:7px 4px}
+    .morse-decoder-table td{padding:10px 5px;text-align:center;border-bottom:1px solid #dfe6ea}
+    .morse-decoder-table tr:nth-child(even) td{background:#fffaf0}
+    .morse-letter-cell{font-size:15pt;font-weight:950;color:#36424c;width:7%}
+    .morse-code-cell{font-family:Arial,monospace;font-size:14pt;font-weight:950;letter-spacing:.12em;color:#4c7897;width:18%}
+    @media print{
+      .morse-decoder-table td{padding:10px 5px !important}
+      .morse-letter-cell{font-size:15pt !important}
+      .morse-code-cell{font-size:14pt !important}
+    }
+
+  
+    .manual-morse-code{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      min-height:20px;
+      white-space:nowrap;
+    }
+    .manual-morse-mark{
+      display:inline-block;
+      background:#4c7897;
+      vertical-align:middle;
+    }
+    .manual-morse-dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+    }
+    .manual-morse-dash{
+      width:18px;
+      height:6px;
+      border-radius:999px;
+    }
+    .morse-key-sample{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      margin:0 5px;
+      vertical-align:middle;
+    }
+    @media print{
+      .manual-morse-dot{width:7px !important;height:7px !important}
+      .manual-morse-dash{width:18px !important;height:6px !important}
+    }
+
+  
+    .morse-key-note{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:nowrap}
+    .morse-legend-item{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+    .morse-legend-item b{font-size:10pt;color:#4c7897}
+    .morse-legend-help{font-size:9pt;font-weight:900;white-space:nowrap;color:#4c7897}
+    @media print{
+      .morse-key-note{display:flex !important;gap:24px !important;flex-wrap:nowrap !important}
+    }
+
+  
+    .memory-demo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+    .memory-step{border:3px solid #d6dde2;border-radius:16px;background:#fff;padding:12px;box-shadow:0 3px 0 #ddd6cc}
+    .memory-step h3{margin:0 0 8px;color:#4c7897;font-size:13pt}
+    .memory-screen-demo{width:120px;height:72px;margin:7px auto 10px;border:4px solid #596772;border-radius:12px;background:#172027;color:#fff2b7;display:flex;align-items:center;justify-content:center;font-size:34pt;font-weight:950}
+    .memory-btn-demo{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .memory-btn-demo span{height:44px;border:2px solid #64717b;border-radius:9px;background:#303b44;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:950}
+    .memory-btn-demo.hidden span{color:#aab4bb;font-size:16pt}
+    .memory-map-demo{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+    .memory-map-demo span{border:2px solid #7aa8c9;border-radius:9px;padding:7px 3px;background:#eef8ff;text-align:center;font-weight:950;color:#4c7897}
+    .memory-rules{margin-top:10px;border:3px dashed #efb84e;border-radius:16px;background:#fff7d7;padding:12px 14px;font-size:9.5pt;font-weight:800;line-height:1.55}
+
+  
+    .memory-rule-list{display:grid;gap:8px;margin-top:11px}
+    .memory-rule-stage{border:3px solid #d6dde2;border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 3px 0 #ddd6cc}
+    .memory-rule-stage h3{margin:0;padding:7px 13px;background:#4c7897;color:#fff;font-size:11.5pt;letter-spacing:.04em}
+    .memory-rule-stage.stage-one h3{background:#d28b28}
+    .memory-sentences{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:5px 12px 7px}
+    .memory-sentence{margin:0;padding:4px 7px;font-size:10.2pt;font-weight:850;line-height:1.25;color:#35414b}
+    .memory-sentence strong{color:#4c7897}
+    .memory-rule-stage.stage-one .memory-sentence strong{color:#b46f17}
+    .memory-simple-note{margin-top:9px;padding:8px 12px;border:2px dashed #edc14d;border-radius:14px;background:#fff8dd;font-size:8.9pt;font-weight:850;line-height:1.34}
+    @media print{
+      .memory-rule-list{gap:8px !important}
+      .memory-rule-stage h3{padding:7px 13px !important;font-size:11.5pt !important}
+      .memory-sentences{padding:5px 12px 7px !important}
+      .memory-sentence{padding:4px 7px !important;font-size:10.2pt !important}
+    }
+
+  </style>
+
+</head>
+<body>
+  <div class="toolbar">
+    <button id="printBtn" type="button">Print Universal Manual</button>
+  </div>
+
+  <main class="manual">
+    
+    <section class="page cover-page">
+      <div class="cover-full-wrap">
+        <img class="cover-full-image" src="misfire-manual-cover.png" alt="Manual cover showing a cute student covered in soot after the bomb exploded while trying to cut the wire">
+      </div>
+      <div class="page-number cover-page-number">1 / 10</div>
+    </section>
+
+<section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 1</div><h1>🎨 Color Panel</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What word do you see?</span><span class="phrase">What symbol?</span><span class="phrase">Star / circle / triangle</span><span class="phrase">Press ___.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="box"><div class="box-title">DISPLAY WORD ➡ USE THE RULE KEY ➡ PRESS</div><table><thead><tr><th>DISPLAY</th><th>PRESS</th></tr></thead><tbody><tr><td class="big">APPLE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#3175bd"></span>BLUE</span></div></td></tr><tr><td class="big">OCEAN</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span></div></td></tr><tr><td class="big">GRASS</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span></div></td></tr><tr><td class="big">BANANA</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#36865e"></span>GREEN</span></div></td></tr><tr><td class="big">GRAPE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c9424b"></span>RED</span></div></td></tr><tr><td class="big">SUN</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span></div></td></tr><tr><td class="big">SNOW</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span></div></td></tr><tr><td class="big">LEMON</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#36865e"></span>GREEN</span></div></td></tr><tr><td class="big">TREE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c9424b"></span>RED</span></div></td></tr><tr><td class="big">NIGHT</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#3175bd"></span>BLUE</span></div></td></tr><tr><td class="big">ROSE</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#3175bd"></span>BLUE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#36865e"></span>GREEN</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#c29c1d"></span>YELLOW</span></div></td></tr><tr><td class="big">CLOUD</td><td><div class="color-key-results"><span class="key-result-line"><span class="key-symbol">★</span><span class="swatch" style="background:#7454a6"></span>PURPLE</span><span class="key-result-line"><span class="key-symbol">●</span><span class="swatch" style="background:#c9424b"></span>RED</span><span class="key-result-line"><span class="key-symbol">▲</span><span class="swatch" style="background:#36865e"></span>GREEN</span></div></td></tr></tbody></table></div>
+      <div class="note">The same display word has a different answer for each rule key. Always check the symbol.</div>
+      <div class="mascot"><div class="mascot-face">🧸</div><div class="mascot-text">Say both the word and the symbol.</div></div>
+      <div class="page-number">2 / 10</div>
+    </section>
+
+    <section class="page">
+      <header class="head">
+        <div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 2</div><h1>✂️ Wires</h1></div>
+        <div class="badge">WORKS FOR EVERY BOMB</div>
+      </header>
+      <div class="module-question">How many wires? What symbol?</div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="wire-howto">Find the wire count and symbol. Answer ONE yes-or-no question.</div>
+      <div class="wire-manual">
+        <div class="wire-count-section">
+          <div class="wire-count-head"><span class="wire-count-badge">4</span><span>4 WIRES</span></div>
+          <div class="wire-key-grid">
+            <div class="wire-key-card"><div class="wire-key-title">★ STAR</div><div class="wire-question">Are there 2 or more RED wires?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut second RED.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut third wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">● CIRCLE</div><div class="wire-question">Is the first wire BLUE?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut last wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut second wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">▲ TRIANGLE</div><div class="wire-question">Are there 2 or more YELLOW wires?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut first YELLOW.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fourth wire.</div></div>
+          </div>
+        </div>
+        <div class="wire-count-section">
+          <div class="wire-count-head"><span class="wire-count-badge">5</span><span>5 WIRES</span></div>
+          <div class="wire-key-grid">
+            <div class="wire-key-card"><div class="wire-key-title">★ STAR</div><div class="wire-question">Are the first and last wires the same color?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut third wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut second wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">● CIRCLE</div><div class="wire-question">Is there only 1 BLACK wire?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut the BLACK wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fourth wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">▲ TRIANGLE</div><div class="wire-question">Is the last wire BLUE?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut second wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut first wire.</div></div>
+          </div>
+        </div>
+        <div class="wire-count-section">
+          <div class="wire-count-head"><span class="wire-count-badge">6</span><span>6 WIRES</span></div>
+          <div class="wire-key-grid">
+            <div class="wire-key-card"><div class="wire-key-title">★ STAR</div><div class="wire-question">Is there only 1 RED wire?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut the RED wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fifth wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">● CIRCLE</div><div class="wire-question">Are there 2 or more BLACK wires?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut second BLACK.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut fourth wire.</div></div>
+            <div class="wire-key-card"><div class="wire-key-title">▲ TRIANGLE</div><div class="wire-question">Is the first wire YELLOW?</div><div class="wire-answer"><strong>YES</strong> ➡ Cut last wire.</div><div class="wire-answer"><strong>NO</strong> ➡ Cut third wire.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="mascot"><div class="mascot-face">🐣</div><div class="mascot-text">Say the symbol, count the wires, then answer the one question with YES or NO.</div></div>
+      <div class="page-number">3 / 10</div>
+    </section>
+
+
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 3</div><h1>🔣 Symbol Numbers</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What symbol do you see?</span><span class="phrase">What symbol?</span><span class="phrase">Circle / dot / line / top / bottom</span><span class="phrase">Press four numbers in order.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="animal-grid"><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with two short lines on top and a dot inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="38" y1="23" x2="31" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="62" y1="23" x2="69" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">2 4 1 7</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 7 3 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">1 6 5 9</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with two short lines on top and no dot"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="38" y1="23" x2="31" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="62" y1="23" x2="69" y2="8" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">5 1 8 3</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 7 1 4</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">5 1 3 8</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with one short line on top and a dot inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="50" y1="20" x2="50" y2="5" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">7 3 2 9</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">5 7 3 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">6 3 4 5</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="circle with two short lines at the bottom and a dot inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><circle cx="50" cy="42" r="28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="39" y1="67" x2="31" y2="82" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="61" y1="67" x2="69" y2="82" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">3 8 6 1</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">5 3 2 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">3 4 1 6</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="triangle with a curved tail at the bottom"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><polygon points="50,12 20,66 80,66" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M50 66 C50 77 58 79 58 88 C58 95 53 98 49 98" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">8 2 5 4</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">9 8 1 3</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">9 4 7 5</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="triangle with one short line on top and two dots inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><polygon points="50,17 18,72 82,72" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="50" y1="17" x2="50" y2="3" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="40" cy="55" r="4.8" fill="currentColor" stroke="none"/><circle cx="60" cy="55" r="4.8" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">4 6 9 2</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">3 9 6 4</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">9 5 4 6</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="open square with a gap on the right and two dots inside"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M22 22 H78 V42" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M22 22 V78 H78 V58" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="40" cy="50" r="4.8" fill="currentColor" stroke="none"/><circle cx="60" cy="50" r="4.8" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">1 9 3 7</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">4 9 6 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">1 3 5 7</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="square with one dot inside and a curved tail at the bottom"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><rect x="22" y="22" width="56" height="56" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/><path d="M50 78 C50 88 58 90 58 98 C58 104 53 107 48 108" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">6 5 2 8</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">7 6 8 2</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">9 3 7 2</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="u shape with three short lines on top"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M25 28 V65 C25 78 35 86 50 86 C65 86 75 78 75 65 V28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="35" y1="18" x2="30" y2="6" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="50" y1="16" x2="50" y2="2" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="65" y1="18" x2="70" y2="6" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">9 7 4 1</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 2 8 5</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">2 7 4 9</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="u shape with one dot inside and short arms on both sides"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M30 22 V60 C30 76 39 86 50 86 C61 86 70 76 70 60 V22" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="30" y1="50" x2="15" y2="50" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="70" y1="50" x2="85" y2="50" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="50" r="5.6" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">2 9 6 5</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">1 4 6 8</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">7 9 3 5</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="crescent shape with a line through the middle"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M66 14 C46 18 32 34 32 50 C32 66 46 82 66 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M62 14 C47 22 40 35 40 50 C40 65 47 78 62 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="20" y1="50" x2="80" y2="50" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">5 8 1 4</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">6 3 2 5</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">2 8 5 3</span></div></div></div><div class="animal symbol-card"><div class="symbol-cell" aria-label="crescent shape with two dots on the right side"><svg class="symbol-svg" viewBox="0 0 100 100" width="72" height="72" aria-hidden="true"><path d="M66 14 C46 18 32 34 32 50 C32 66 46 82 66 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M62 14 C47 22 40 35 40 50 C40 65 47 78 62 86" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="74" cy="40" r="4.8" fill="currentColor" stroke="none"/><circle cx="74" cy="60" r="4.8" fill="currentColor" stroke="none"/></svg></div><div class="animal-key-seqs"><div class="animal-key-line"><span class="key-symbol">★</span><span class="animal-seq-text">7 1 3 6</span></div><div class="animal-key-line"><span class="key-symbol">●</span><span class="animal-seq-text">2 7 4 5</span></div><div class="animal-key-line"><span class="key-symbol">▲</span><span class="animal-seq-text">4 8 6 1</span></div></div></div></div>
+      <div class="note">Use the symbol AND the rule key. A wrong number resets the four-number sequence.</div>
+      <div class="mascot"><div class="mascot-face">🧩</div><div class="mascot-text">Good description words: circle, dot, line, top, bottom, inside, open, tail, and moon.</div></div>
+      <div class="page-number">4 / 10</div>
+    </section>
+
+    <section class="page">
+      <header class="head">
+        <div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 4</div><h1>🧭 Directions</h1></div>
+        <div class="badge">WORKS FOR EVERY BOMB</div>
+      </header>
+      <div class="say">
+        <strong>USE ENGLISH</strong>
+        <div class="phrases">
+          <span class="phrase">What place do you see?</span>
+          <span class="phrase">What route?</span>
+          <span class="phrase">Up / down / left / right</span>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">PLACE + ROUTE NUMBER ➜ DIRECTIONS</div>
+        <div class="route-grid"><div class="route-card"><strong>SCHOOL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>PARK</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div></div><div class="route-card"><strong>LIBRARY</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div></div><div class="route-card"><strong>STATION</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>HOSPITAL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div></div><div class="route-card"><strong>SUPERMARKET</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>RESTAURANT</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div></div><div class="route-card"><strong>POST OFFICE</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div></div><div class="route-card"><strong>MUSEUM</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">⬅</span></div></div></div><div class="route-card"><strong>AIRPORT</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>HOTEL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">⬅</span><span class="dir-step">⬇</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>BANK</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">➡</span><span class="dir-step">⬇</span></div></div></div><div class="route-card"><strong>ZOO</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">⬆</span><span class="dir-step">➡</span><span class="dir-step">⬇</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">➡</span></div></div></div><div class="route-card"><strong>CITY HALL</strong><div class="route-line"><span class="route-label">ROUTE 1</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span></div></div><div class="route-line"><span class="route-label">ROUTE 2</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">⬇</span></div></div><div class="route-line"><span class="route-label">ROUTE 3</span><div class="arrows"><span class="dir-step">➡</span><span class="dir-step">⬅</span><span class="dir-step">⬆</span><span class="dir-step">⬇</span><span class="dir-step">➡</span></div></div></div></div>
+      </div>
+
+      <div class="note route-note">
+        Use the place + route number. Follow all arrows in order.
+      </div>
+
+      <div class="page-number">5 / 10</div>
+    </section>
+
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 5</div><h1>🔗 Word Lookup</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What word is on the display?</span><span class="phrase">What symbol?</span><span class="phrase">What are the choices?</span><span class="phrase">Press ___.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="box"><div class="box-title">DISPLAY WORD ➡ USE THE RULE KEY ➡ PRESS</div><div class="lookup-grid" style="padding:10px"><div class="lookup"><strong>APPLE</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ DOG</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ SOCCER</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ BOOK</span></div></div></div><div class="lookup"><strong>DOG</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ SCHOOL</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ APPLE</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ TENNIS</span></div></div></div><div class="lookup"><strong>SCHOOL</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ RED</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ PIZZA</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ PARK</span></div></div></div><div class="lookup"><strong>RED</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ TENNIS</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ SCHOOL</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ SUN</span></div></div></div><div class="lookup"><strong>TENNIS</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ BOOK</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ CAT</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ BLUE</span></div></div></div><div class="lookup"><strong>BOOK</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ CAR</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ RAIN</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ PENCIL</span></div></div></div><div class="lookup"><strong>CAR</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ RAIN</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ TRAIN</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ APPLE</span></div></div></div><div class="lookup"><strong>RAIN</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ PIZZA</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ TENNIS</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ RED</span></div></div></div><div class="lookup"><strong>PIZZA</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ CAT</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ CAR</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ TRAIN</span></div></div></div><div class="lookup"><strong>CAT</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ PARK</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ PENCIL</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ SOCCER</span></div></div></div><div class="lookup"><strong>PARK</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ BLUE</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ SUN</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ CAT</span></div></div></div><div class="lookup"><strong>BLUE</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ SOCCER</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ BOOK</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ RAIN</span></div></div></div><div class="lookup"><strong>SOCCER</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ PENCIL</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ DOG</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ CAR</span></div></div></div><div class="lookup"><strong>PENCIL</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ TRAIN</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ BLUE</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ SCHOOL</span></div></div></div><div class="lookup"><strong>TRAIN</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ SUN</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ PARK</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ DOG</span></div></div></div><div class="lookup"><strong>SUN</strong><div class="lookup-key-lines"><div class="lookup-key-line"><span class="key-symbol">★</span><span>➜ APPLE</span></div><div class="lookup-key-line"><span class="key-symbol">●</span><span>➜ RED</span></div><div class="lookup-key-line"><span class="key-symbol">▲</span><span>➜ PIZZA</span></div></div></div></div></div>
+      <div class="note">Get 3 correct answers. After every answer, the display, choices, and rule key can change. Hard rounds include tempting answers from the other rule keys.</div>
+      <div class="mascot"><div class="mascot-face">🐶</div><div class="mascot-text">The symbol matters - the same word can point to three different answers.</div></div>
+      <div class="page-number">6 / 10</div>
+    </section>
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 6</div><h1>🧮 Calculator</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What are the numbers?</span><span class="phrase">What color is the light?</span><span class="phrase">What symbol?</span><span class="phrase">The answer is ___.</span></div></div>
+      <div class="rule-key-legend"><span class="rule-key-pill"><b>★</b>STAR</span><span class="rule-key-pill"><b>●</b>CIRCLE</span><span class="rule-key-pill"><b>▲</b>TRIANGLE</span></div>
+      <div class="calc-equation"><div class="calc-symbol">X</div><div class="calc-op-box"><div class="calc-op-item"><span class="calc-dot red"></span>RED</div><div class="calc-op-item"><span class="calc-dot blue"></span>BLUE</div><div class="calc-op-item"><span class="calc-dot green"></span>GREEN</div><div class="calc-op-item"><span class="calc-dot yellow"></span>YELLOW</div></div><div class="calc-symbol">Y</div><div class="calc-symbol">=</div><div class="calc-symbol">?</div></div>
+      <div class="box"><div class="box-title">RULE KEY + LIGHT COLOR ➡ MATH SYMBOL</div><table class="calc-key-table"><thead><tr><th>KEY</th><th><span class="swatch" style="background:#ff5d5d"></span>RED</th><th><span class="swatch" style="background:#5d9cff"></span>BLUE</th><th><span class="swatch" style="background:#64d29c"></span>GREEN</th><th><span class="swatch" style="background:#f0c94c"></span>YELLOW</th></tr></thead><tbody><tr><td class="key-cell">★</td><td class="answer">+</td><td class="answer">−</td><td class="answer">×</td><td class="answer">÷</td></tr><tr><td class="key-cell">●</td><td class="answer">÷</td><td class="answer">×</td><td class="answer">+</td><td class="answer">−</td></tr><tr><td class="key-cell">▲</td><td class="answer">−</td><td class="answer">+</td><td class="answer">÷</td><td class="answer">×</td></tr></tbody></table></div>
+      <div class="note">Get 2 correct calculations. The numbers, light, and rule key can change after every answer. Addition/subtraction use two-digit numbers; multiplication/division may use one- or two-digit numbers.</div>
+      <div class="mascot"><div class="mascot-face">🐼</div><div class="mascot-text">Check BOTH the symbol and the light before choosing the operation.</div></div>
+      <div class="page-number">7 / 10</div>
+    </section>
+
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 7</div><h1>🔡 Letter Scrolls</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What are the five code letters?</span><span class="phrase">First / second / third / fourth / fifth</span><span class="phrase">Change scroll ___ to ___.</span></div></div>
+      <div class="decoder-intro"><b>HOW TO DECODE:</b> Read the CODE letter under each scroll. Find that CODE row, then read the letter in the matching SCROLL column. Set all five scrolls and press ENTER.</div>
+      <div class="box decoder-table-box"><div class="box-title">CODE ➜ CORRECT LETTER FOR EACH SCROLL</div>
+        <table class="decoder-table">
+          <thead><tr><th>CODE</th><th>SCROLL 1</th><th>SCROLL 2</th><th>SCROLL 3</th><th>SCROLL 4</th><th>SCROLL 5</th></tr></thead>
+          <tbody><tr><td>A</td><td>W</td><td>R</td><td>P</td><td>Y</td><td>B</td></tr><tr><td>B</td><td>Q</td><td>A</td><td>Z</td><td>R</td><td>Q</td></tr><tr><td>C</td><td>N</td><td>H</td><td>L</td><td>S</td><td>M</td></tr><tr><td>D</td><td>C</td><td>J</td><td>A</td><td>F</td><td>E</td></tr><tr><td>E</td><td>P</td><td>G</td><td>C</td><td>X</td><td>K</td></tr><tr><td>F</td><td>T</td><td>K</td><td>M</td><td>A</td><td>P</td></tr><tr><td>G</td><td>J</td><td>U</td><td>T</td><td>Z</td><td>O</td></tr><tr><td>H</td><td>M</td><td>O</td><td>Y</td><td>V</td><td>U</td></tr><tr><td>I</td><td>S</td><td>M</td><td>V</td><td>H</td><td>F</td></tr><tr><td>J</td><td>K</td><td>L</td><td>N</td><td>C</td><td>J</td></tr><tr><td>K</td><td>V</td><td>E</td><td>X</td><td>E</td><td>H</td></tr><tr><td>L</td><td>D</td><td>T</td><td>R</td><td>Q</td><td>C</td></tr><tr><td>M</td><td>R</td><td>D</td><td>W</td><td>J</td><td>N</td></tr><tr><td>N</td><td>B</td><td>Y</td><td>U</td><td>O</td><td>V</td></tr><tr><td>O</td><td>Z</td><td>S</td><td>E</td><td>K</td><td>Y</td></tr><tr><td>P</td><td>F</td><td>W</td><td>S</td><td>W</td><td>X</td></tr><tr><td>Q</td><td>A</td><td>Z</td><td>Q</td><td>M</td><td>L</td></tr><tr><td>R</td><td>I</td><td>V</td><td>K</td><td>I</td><td>G</td></tr><tr><td>S</td><td>X</td><td>Q</td><td>O</td><td>N</td><td>Z</td></tr><tr><td>T</td><td>O</td><td>F</td><td>B</td><td>T</td><td>A</td></tr><tr><td>U</td><td>U</td><td>P</td><td>J</td><td>L</td><td>W</td></tr><tr><td>V</td><td>Y</td><td>I</td><td>I</td><td>U</td><td>T</td></tr><tr><td>W</td><td>E</td><td>C</td><td>H</td><td>D</td><td>S</td></tr><tr><td>X</td><td>L</td><td>N</td><td>F</td><td>G</td><td>D</td></tr><tr><td>Y</td><td>G</td><td>X</td><td>G</td><td>P</td><td>I</td></tr><tr><td>Z</td><td>H</td><td>B</td><td>D</td><td>B</td><td>R</td></tr></tbody>
+        </table>
+      </div>
+      <div class="decoder-tip">💡 The five decoded letters always make a real 5-letter word.</div>
+      <div class="page-number">8 / 10</div>
+    </section>
+
+
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 8</div><h1>📡 Morse Code</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What is line one?</span><span class="phrase">Dot / dash</span><span class="phrase">Again, please.</span><span class="phrase">The letter is ___.</span></div></div>
+      <div class="morse-key-note"><span class="morse-legend-item"><b>DOT</b><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span></span></span><span class="morse-legend-item"><b>DASH</b><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span></span></span><span class="morse-legend-help">Decode each group as ONE letter.</span></div>
+      <div class="box"><div class="box-title">MORSE CODE DECODER - A TO Z</div><table class="morse-decoder-table"><thead><tr>
+<th>LETTER</th><th>CODE</th><th>LETTER</th><th>CODE</th><th>LETTER</th><th>CODE</th><th>LETTER</th><th>CODE</th>
+</tr></thead><tbody><tr><td class="morse-letter-cell">A</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">B</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">C</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">D</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td></tr><tr><td class="morse-letter-cell">E</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">F</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">G</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">H</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td></tr><tr><td class="morse-letter-cell">I</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">J</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">K</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">L</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td></tr><tr><td class="morse-letter-cell">M</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">N</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">O</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">P</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td></tr><tr><td class="morse-letter-cell">Q</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">R</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">S</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td class="morse-letter-cell">T</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span></span></td></tr><tr><td class="morse-letter-cell">U</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">V</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">W</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">X</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td></tr><tr><td class="morse-letter-cell">Y</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span></span></td><td class="morse-letter-cell">Z</td><td class="morse-code-cell"><span class="manual-morse-code"><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dash"></span><span class="manual-morse-mark manual-morse-dot"></span><span class="manual-morse-mark manual-morse-dot"></span></span></td><td></td><td></td><td></td><td></td></tr></tbody></table></div></div>
+      <div class="note">Each line is ONE Morse letter. Decode each line, type one letter in each answer box, then press ENTER.<br><br><b>Easy:</b> 1 line &nbsp; · &nbsp; <b>Medium:</b> 2 lines &nbsp; · &nbsp; <b>Hard:</b> 3 lines &nbsp; · &nbsp; <b>Very Hard:</b> 4 lines.</div>
+      <div class="mascot"><div class="mascot-face">📻</div><div class="mascot-text">There is no sound. Read the printed dots and dashes from left to right.</div></div>
+      <div class="page-number">9 / 10</div>
+    </section>
+
+
+
+    <section class="page">
+      <header class="head"><div><div class="series">ESL DEFUSE · UNIVERSAL MANUAL · MODULE 9</div><h1>🧠 Memory</h1></div><div class="badge">WORKS FOR EVERY BOMB</div></header>
+      <div class="say"><strong>USE ENGLISH</strong><div class="phrases"><span class="phrase">What stage?</span><span class="phrase">What number is on the screen?</span><span class="phrase">Press number ___.</span><span class="phrase">Where was number ___?</span></div></div>
+      <div class="memory-rule-list"><div class="memory-rule-stage stage-one"><h3>STAGE 1</h3><div class="memory-sentences"><p class="memory-sentence">If the screen is <strong>1</strong>, press <strong>1</strong>.</p><p class="memory-sentence">If the screen is <strong>2</strong>, press <strong>2</strong>.</p><p class="memory-sentence">If the screen is <strong>3</strong>, press <strong>3</strong>.</p><p class="memory-sentence">If the screen is <strong>4</strong>, press <strong>4</strong>.</p></div></div><div class="memory-rule-stage"><h3>STAGE 2</h3><div class="memory-sentences"><p class="memory-sentence">If the screen is <strong>1</strong>, press <strong>2</strong>.</p><p class="memory-sentence">If the screen is <strong>2</strong>, press <strong>1</strong>.</p><p class="memory-sentence">If the screen is <strong>3</strong>, press <strong>4</strong>.</p><p class="memory-sentence">If the screen is <strong>4</strong>, press <strong>3</strong>.</p></div></div><div class="memory-rule-stage"><h3>STAGE 3</h3><div class="memory-sentences"><p class="memory-sentence">If the screen is <strong>1</strong>, press <strong>3</strong>.</p><p class="memory-sentence">If the screen is <strong>2</strong>, press <strong>4</strong>.</p><p class="memory-sentence">If the screen is <strong>3</strong>, press <strong>1</strong>.</p><p class="memory-sentence">If the screen is <strong>4</strong>, press <strong>2</strong>.</p></div></div><div class="memory-rule-stage"><h3>STAGE 4</h3><div class="memory-sentences"><p class="memory-sentence">If the screen is <strong>1</strong>, press <strong>4</strong>.</p><p class="memory-sentence">If the screen is <strong>2</strong>, press <strong>3</strong>.</p><p class="memory-sentence">If the screen is <strong>3</strong>, press <strong>2</strong>.</p><p class="memory-sentence">If the screen is <strong>4</strong>, press <strong>1</strong>.</p></div></div><div class="memory-rule-stage"><h3>STAGE 5</h3><div class="memory-sentences"><p class="memory-sentence">If the screen is <strong>1</strong>, press <strong>2</strong>.</p><p class="memory-sentence">If the screen is <strong>2</strong>, press <strong>3</strong>.</p><p class="memory-sentence">If the screen is <strong>3</strong>, press <strong>4</strong>.</p><p class="memory-sentence">If the screen is <strong>4</strong>, press <strong>1</strong>.</p></div></div></div>
+      <div class="memory-simple-note"><b>IMPORTANT:</b> In Stage 1, the button numbers are visible. After Stage 1, the numbers disappear but the buttons DO NOT MOVE. Remember where buttons 1–4 were. A new Memory module randomizes the four button positions again.<br><br>Easy uses Stages 1–3. Medium uses Stages 1–4. Hard / Very Hard use Stages 1–5.</div>
+      <div class="page-number">10 / 10</div>
+    </section>
+
+
+  </main>
+
+  <script>
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+  </script>
+</body>
+</html>
