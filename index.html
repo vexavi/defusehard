@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111418" />
+  <title>ESL Defuse</title>
+  <link rel="stylesheet" href="style.css?v=teacher-timer-v43-audio-warning-v42-20260910-1" />
+</head>
+<body>
+  <main class="app">
+    
+
+<section id="home" class="screen active workshop-screen home-screen minimal-home-screen">
+  <div class="workshop-stage minimal-home-stage">
+    <section class="bomb-console title-console minimal-title-console" aria-label="ESL Defuse title screen">
+      <div class="case-cable cable-red-left" aria-hidden="true"></div>
+      <div class="case-cable cable-blue-left" aria-hidden="true"></div>
+      <div class="case-cable cable-red-right" aria-hidden="true"></div>
+      <div class="case-cable cable-blue-right" aria-hidden="true"></div>
+      <div class="case-clamp clamp-left-top" aria-hidden="true"></div>
+      <div class="case-clamp clamp-left-bottom" aria-hidden="true"></div>
+      <div class="case-clamp clamp-right-top" aria-hidden="true"></div>
+      <div class="case-clamp clamp-right-bottom" aria-hidden="true"></div>
+
+      <div class="minimal-title-body">
+        <div class="corner-screw screw-tl"></div>
+        <div class="corner-screw screw-tr"></div>
+        <div class="corner-screw screw-bl"></div>
+        <div class="corner-screw screw-br"></div>
+
+        <div class="minimal-title-center">
+          <h1>ESL Defuse</h1>
+          <div class="minimal-title-actions">
+            <button id="startGame" class="primary">Start Level 1</button>
+            <button id="resetProgress" class="reset-progress" type="button">Reset Saved Progress</button>
+          </div>
+        </div>
+
+        <div class="campaign-dom-ghosts" aria-hidden="true">
+          <h2 id="campaignHomeTitle">Start at Level 1</h2>
+          <span id="homeLevelLabel">LEVEL 1</span>
+          <strong id="homeLevelDetails">1 module · 3:00</strong>
+          <div id="campaignProgressNote">Progress saves automatically after each cleared level on this browser.</div>
+        </div>
+
+        <article id="teacherTestPanel" class="teacher-test-panel" hidden>
+          <div class="teacher-test-header">
+            <div>
+              <div class="teacher-test-kicker">TEACHER ONLY</div>
+              <h2>🛠 Teacher Test Mode</h2>
+            </div>
+            <button id="teacherModeClose" class="teacher-close" type="button">HIDE</button>
+          </div>
+
+          <p class="teacher-test-note">Test a full campaign level or launch one specific module without changing student progression.</p>
+
+          <div class="teacher-test-grid">
+            <label>
+              Level / rule context
+              <select id="teacherLevelSelect">
+                <option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option>
+                <option value="6">Level 6</option><option value="7">Level 7</option><option value="8">Level 8</option><option value="9">Level 9</option><option value="10">Level 10</option>
+                <option value="11">Level 11</option><option value="12">Level 12</option><option value="13">Level 13</option><option value="14">Level 14</option><option value="15">Level 15</option>
+                <option value="16">Level 16</option><option value="17">Level 17</option><option value="18">Level 18</option><option value="19">Level 19</option><option value="20">Level 20</option>
+              </select>
+            </label>
+
+            <label>
+              Module
+              <select id="teacherModuleSelect">
+                <option value="color">Color Panel</option>
+                <option value="animals">Symbol Numbers</option>
+                <option value="directions">Directions</option>
+                <option value="wires">Wires</option>
+                <option value="category">Word Lookup</option>
+                <option value="calculator">Calculator</option>
+                <option value="decoder">Letter Scrolls</option>
+                <option value="morse">Morse Code</option>
+                <option value="memory">Memory</option>
+              </select>
+            </label>
+
+            <label>
+              Difficulty
+              <select id="teacherDifficultySelect">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+                <option value="veryHard">Very Hard</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="teacher-timer-settings">
+            <span class="teacher-timer-title">Starting timer</span>
+            <label class="teacher-time-field">
+              <span>Minute</span>
+              <input id="teacherTimerMinutes" type="number" min="0" max="99" step="1" inputmode="numeric" value="3" aria-label="Teacher test starting minutes" disabled />
+            </label>
+            <span class="teacher-time-colon" aria-hidden="true">:</span>
+            <label class="teacher-time-field">
+              <span>Second</span>
+              <input id="teacherTimerSeconds" type="number" min="0" max="59" step="1" inputmode="numeric" value="0" aria-label="Teacher test starting seconds" disabled />
+            </label>
+          </div>
+
+          <div class="teacher-test-options">
+            <label class="teacher-check"><input id="teacherNoTimer" type="checkbox" checked /> No timer</label>
+            <label class="teacher-check"><input id="teacherNoStrikes" type="checkbox" checked /> Ignore strikes</label>
+            <label class="teacher-check"><input id="teacherSkipCountdown" type="checkbox" checked /> Skip countdown</label>
+          </div>
+
+          <div class="teacher-test-actions">
+            <button id="teacherTestLevel" class="teacher-action" type="button">TEST SELECTED LEVEL</button>
+            <button id="teacherTestModule" class="teacher-action teacher-action-alt" type="button">TEST SELECTED MODULE</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</section>
+
+    <section id="game" class="screen workshop-screen">
+      <div class="workshop-stage">
+        <section class="bomb-console" aria-label="Bomb defusal interface">
+          <div id="strikeFlashOverlay" class="strike-flash-overlay" aria-hidden="true"></div>
+          <div class="case-cable cable-red-left" aria-hidden="true"></div>
+          <div class="case-cable cable-blue-left" aria-hidden="true"></div>
+          <div class="case-cable cable-red-right" aria-hidden="true"></div>
+          <div class="case-cable cable-blue-right" aria-hidden="true"></div>
+          <div class="case-clamp clamp-left-top" aria-hidden="true"></div>
+          <div class="case-clamp clamp-left-bottom" aria-hidden="true"></div>
+          <div class="case-clamp clamp-right-top" aria-hidden="true"></div>
+          <div class="case-clamp clamp-right-bottom" aria-hidden="true"></div>
+
+          <div class="bomb-top-strip">
+            <div class="brand-plate">
+              <div class="brand-tape">ESL DEFUSAL UNIT</div>
+              <div class="unit-code">UNIT <strong id="serialNumber">ESL-4821</strong></div>
+              <div class="banana-sticker" aria-hidden="true">🍌</div>
+            </div>
+
+            <div class="bomb-readout timer-readout">
+              <div class="readout-label">TIME</div>
+              <div id="timer" class="digital-timer">03:00</div>
+            </div>
+
+            <div class="bomb-readout compact strike-readout">
+              <div class="readout-label">STRIKES</div>
+              <div class="strike-lights" aria-label="Strike indicators">
+                <span id="strikeLight1" class="strike-light" aria-hidden="true">X</span>
+                <span id="strikeLight2" class="strike-light" aria-hidden="true">X</span>
+                <span id="strikeLight3" class="strike-light" aria-hidden="true">X</span>
+              </div>
+              <div class="strike-number"><span id="strikeCount">0</span>/3</div>
+            </div>
+          </div>
+
+          <div class="bomb-info-row">
+            <div class="info-plate info-level">
+              <span class="info-icon" aria-hidden="true">★</span>
+              <span class="info-label">LEVEL</span>
+              <strong id="levelLabel">1 / 20</strong>
+            </div>
+            <div class="info-plate info-clear">
+              <span class="info-icon" aria-hidden="true">⚑</span>
+              <span class="info-label">CLEAR</span>
+              <strong id="moduleProgress">1/1</strong>
+            </div>
+            <div class="info-plate info-status">
+              <span class="info-label">STATUS</span>
+              <strong id="bombStatus">ARMED</strong>
+            </div>
+            <div class="module-lamp-wrap info-ready">
+              <span class="module-lamp-label">READY</span>
+              <span id="moduleLamp" class="module-lamp"></span>
+            </div>
+          </div>
+
+          <div class="bomb-body">
+            <div class="corner-screw screw-tl"></div>
+            <div class="corner-screw screw-tr"></div>
+            <div class="corner-screw screw-bl"></div>
+            <div class="corner-screw screw-br"></div>
+
+            <div class="paper-doodle paper-doodle-left" aria-hidden="true">THINK<br>TALK<br>TOGETHER ♥</div>
+            <div class="paper-doodle paper-doodle-right" aria-hidden="true">GOOD<br>WORK! ☺</div>
+
+            <header class="module-header">
+              <div class="module-heading-group">
+                <div class="kicker">ACTIVE MODULE</div>
+                <h2 id="moduleTitle">Module</h2>
+              </div>
+            </header>
+
+            <div class="progress bomb-progress">
+              <div id="progressFill"></div>
+            </div>
+
+            <section id="bombModule" class="bomb-panel mounted-module" aria-live="polite"></section>
+          </div>
+
+          <div class="bomb-bottom-strip">
+            <div id="feedback" class="feedback console-feedback">Describe what you see. Do not look at the manual.</div>
+            <button id="abortGame" class="abort-switch" type="button">END TEST</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="result-card">
+        <div id="resultIcon" class="result-icon">✅</div>
+        <h2 id="resultTitle">Bomb Defused!</h2>
+        <p id="resultText">Nice communication.</p>
+        <button id="playAgain" class="primary">Play Again</button>
+      </div>
+    </section>
+  </main>
+<div id="explosionOverlay" class="explosion-overlay" aria-hidden="true">
+    <div class="explosion-flash"></div>
+    <div class="explosion-core">💥</div>
+    <div class="explosion-ring ring-one"></div>
+    <div class="explosion-ring ring-two"></div>
+    <div class="explosion-debris" aria-hidden="true">
+      <span style="--dx:-190px;--dy:-110px;--r:-120deg">◆</span>
+      <span style="--dx:-145px;--dy:85px;--r:75deg">▲</span>
+      <span style="--dx:-65px;--dy:-175px;--r:180deg">●</span>
+      <span style="--dx:25px;--dy:-195px;--r:130deg">◆</span>
+      <span style="--dx:120px;--dy:-145px;--r:-160deg">▲</span>
+      <span style="--dx:195px;--dy:-55px;--r:95deg">●</span>
+      <span style="--dx:185px;--dy:90px;--r:-70deg">◆</span>
+      <span style="--dx:90px;--dy:165px;--r:150deg">▲</span>
+      <span style="--dx:-20px;--dy:190px;--r:-120deg">●</span>
+      <span style="--dx:-135px;--dy:155px;--r:80deg">◆</span>
+      <span style="--dx:-205px;--dy:20px;--r:145deg">▲</span>
+      <span style="--dx:55px;--dy:125px;--r:-95deg">●</span>
+    </div>
+    <div class="explosion-text">BOOM!</div>
+  </div>
+
+  <div id="levelCountdownOverlay" class="level-countdown-overlay" aria-hidden="true">
+    <div class="level-countdown-inner">
+      <div class="level-countdown-label">GET READY</div>
+      <div id="levelCountdownNumber" class="level-countdown-number">3</div>
+    </div>
+  </div>
+
+  <script src="game.js?v=audio-warning-v42-20260910-1"></script>
+</body>
+</html>
